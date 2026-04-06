@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Catálogo de polos — visualiza colores en tiempo real" />
+  <meta name="description" content="Configurador de polos paso a paso en tiempo real" />
   <meta name="theme-color" content="#0d0d0d" />
-  <title>Polo Studio</title>
+  <title>Polo Studio Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -39,7 +39,6 @@
       --r-xl: 32px;
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, .4);
       --shadow-md: 0 8px 32px rgba(0, 0, 0, .5);
-      --shadow-lg: 0 20px 60px rgba(0, 0, 0, .65);
       --t-fast: 140ms ease;
       --t-base: 260ms cubic-bezier(.4, 0, .2, 1);
       --t-spring: 420ms cubic-bezier(.34, 1.4, .64, 1);
@@ -96,7 +95,7 @@
     }
 
     /* ═══════════════════════════════════════════════════
-       LAYOUT GENERAL
+       LAYOUT GENERAL & HEADER
     ═══════════════════════════════════════════════════ */
     .page {
       display: none;
@@ -108,7 +107,6 @@
       display: flex
     }
 
-    /* ── HEADER ── */
     .site-header {
       display: flex;
       align-items: center;
@@ -156,7 +154,7 @@
       font-size: .8rem;
       letter-spacing: .06em;
       color: var(--text-muted);
-      transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+      transition: all var(--t-fast);
     }
 
     .btn-ghost:hover {
@@ -165,250 +163,134 @@
       background: var(--surface2)
     }
 
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0d0d;
+      padding: 12px 24px;
+      border-radius: var(--r-sm);
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      transition: all var(--t-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #edd98e;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(226, 201, 126, .25)
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
     /* ═══════════════════════════════════════════════════
-       PÁGINA: CATÁLOGO (cliente)
+       PÁGINA: HOME (Landing)
     ═══════════════════════════════════════════════════ */
-    .catalog-hero {
-      padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 48px) clamp(24px, 3vw, 40px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: flex-end;
-      justify-content: space-between;
-    }
-
-    .catalog-hero-text {
+    .home-hero {
       flex: 1;
-      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(226, 201, 126, .08) 0%, transparent 70%);
     }
 
-    .catalog-hero h1 {
+    .home-hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-size: clamp(3rem, 10vw, 7rem);
       letter-spacing: .05em;
-      line-height: .92;
-      background: linear-gradient(135deg, var(--text) 40%, var(--text-muted));
+      line-height: .9;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--text) 30%, var(--text-muted));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .catalog-hero p {
-      margin-top: 12px;
+    .home-hero p {
       color: var(--text-muted);
-      font-size: .9rem;
-      max-width: 420px
-    }
-
-    .catalog-search-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 320px;
-    }
-
-    .catalog-search-wrap input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 12px 20px 12px 40px;
-      font-size: .9rem;
-      color: var(--text);
-      transition: border-color var(--t-fast), box-shadow var(--t-fast);
-    }
-
-    .catalog-search-wrap input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-dim);
-    }
-
-    .catalog-search-wrap::before {
-      content: '🔍';
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      opacity: 0.5;
-    }
-
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      padding: clamp(20px, 4vw, 40px);
-      flex: 1;
-    }
-
-    .polo-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color var(--t-fast), transform var(--t-spring), box-shadow var(--t-base);
-    }
-
-    .polo-card:hover {
-      border-color: var(--border2);
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .polo-card__thumb {
-      aspect-ratio: 1/1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--surface2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .polo-card__thumb canvas {
-      max-width: 85%;
-      max-height: 85%;
-      object-fit: contain;
-      transition: transform var(--t-spring);
-    }
-
-    .polo-card:hover .polo-card__thumb canvas {
-      transform: scale(1.04)
-    }
-
-    .polo-card__thumb .no-img {
-      color: var(--text-dim);
-      font-size: .78rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 10px;
-    }
-
-    .polo-card__info {
-      padding: 16px 18px 20px
-    }
-
-    .polo-card__name {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: .02em
-    }
-
-    .polo-card__colors {
-      margin-top: 8px;
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap
-    }
-
-    .polo-card__dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      flex-shrink: 0;
-    }
-
-    .polo-card__cta {
-      margin-top: 14px;
-      font-size: .75rem;
-      color: var(--text-muted);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .polo-card__cta::after {
-      content: '→';
-      transition: transform var(--t-spring)
-    }
-
-    .polo-card:hover .polo-card__cta::after {
-      transform: translateX(4px)
-    }
-
-    .catalog-empty {
-      grid-column: 1/-1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 80px 20px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .catalog-empty span {
-      font-size: 3rem
-    }
-
-    .catalog-empty p {
-      font-size: .9rem;
-      max-width: 320px
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      max-width: 500px;
+      margin-bottom: 40px;
+      line-height: 1.5;
     }
 
     /* ═══════════════════════════════════════════════════
-       PÁGINA: VISUALIZADOR (cliente)
+       PÁGINA: CONFIGURADOR (Builder)
     ═══════════════════════════════════════════════════ */
-    .viewer-layout {
+    .builder-layout {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 420px;
       flex: 1;
       min-height: 0;
     }
 
-    @media(max-width:820px) {
-      .viewer-layout {
+    @media(max-width:900px) {
+      .builder-layout {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr
+        grid-template-rows: 45vh 1fr
       }
     }
 
-    .viewer-stage {
+    /* Lado Izquierdo: Visualizador */
+    .builder-stage {
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--surface);
       border-right: 1px solid var(--border);
-      padding: 40px 24px;
       position: relative;
       overflow: hidden;
-      min-height: 320px;
     }
 
-    .viewer-stage::before {
+    .builder-stage::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 40% 30%, rgba(226, 201, 126, .04) 0%, transparent 65%);
+      background: radial-gradient(ellipse at 40% 30%, rgba(226, 201, 126, .05) 0%, transparent 65%);
       pointer-events: none;
     }
 
     .viewer-glow {
       position: absolute;
-      width: 55%;
-      height: 55%;
+      width: 60%;
+      height: 60%;
       border-radius: 50%;
-      filter: blur(70px);
+      filter: blur(80px);
       pointer-events: none;
-      opacity: .6;
+      opacity: .5;
       transition: background var(--t-base);
     }
 
-    #viewer-canvas {
+    #builder-canvas {
       position: relative;
       z-index: 1;
-      max-width: min(340px, 80%);
-      max-height: min(420px, 70vh);
+      max-width: min(380px, 85%);
+      max-height: min(500px, 80vh);
       object-fit: contain;
-      filter: drop-shadow(0 16px 40px rgba(0, 0, 0, .55));
-      transition: transform var(--t-spring), opacity var(--t-fast);
-      animation: floatIn .6s var(--t-spring) both;
+      filter: drop-shadow(0 16px 40px rgba(0, 0, 0, .6));
+      transition: opacity var(--t-fast);
+      animation: floatIn .8s var(--t-spring) both;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
     }
 
     .viewer-loader {
@@ -421,18 +303,14 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity var(--t-fast);
-      background: rgba(22, 22, 22, 0.7);
+      background: rgba(22, 22, 22, 0.8);
       padding: 16px 24px;
       border-radius: var(--r-md);
       backdrop-filter: blur(4px);
     }
 
     .viewer-loader.active {
-      opacity: 1;
-    }
-
-    .viewer-loader .spinner {
-      border-top-color: var(--accent);
+      opacity: 1
     }
 
     .viewer-loader span {
@@ -442,99 +320,115 @@
       font-weight: 500;
     }
 
-    @keyframes floatIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(.95)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    .viewer-panel {
+    /* Lado Derecho: Panel de Controles */
+    .builder-panel {
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
       background: var(--bg);
+      overflow-y: auto;
+      position: relative;
     }
 
-    .viewer-back {
+    /* Stepper Header */
+    .builder-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(13, 13, 13, 0.95);
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    .step-indicator {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      letter-spacing: .04em;
+      line-height: 1;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* Contenido Dinámico de Pasos */
+    .builder-content {
+      padding: 24px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Componentes de Opciones (Tarjetas, Colores) */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .options-grid.colors {
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 10px;
+    }
+
+    .option-card {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--t-spring);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+      background: var(--surface3);
+    }
+
+    .option-card.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 4px 16px rgba(226, 201, 126, 0.1);
+    }
+
+    .option-card__img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: contain;
+      border-radius: var(--r-sm);
+      background: var(--surface);
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 20px 24px 0;
-      font-size: .8rem;
-      color: var(--text-muted);
-      letter-spacing: .05em;
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: fit-content;
-      transition: color var(--t-fast);
+      justify-content: center;
     }
 
-    .viewer-back:hover {
-      color: var(--text)
+    .option-card__img canvas {
+      max-width: 90%;
+      max-height: 90%;
     }
 
-    .viewer-back::before {
-      content: '←'
-    }
-
-    .viewer-info {
-      padding: 20px 24px 0
-    }
-
-    .viewer-polo-name {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      letter-spacing: .06em;
-      line-height: .95
-    }
-
-    .viewer-color-badge {
-      margin-top: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 7px 16px 7px 9px;
-    }
-
-    .viewer-badge-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, .12);
-      flex-shrink: 0;
-      transition: background var(--t-base);
-    }
-
-    .viewer-badge-name {
-      font-size: .78rem;
-      font-weight: 500;
-      letter-spacing: .04em;
-      transition: opacity var(--t-fast)
-    }
-
-    .viewer-section-label {
-      padding: 22px 24px 8px;
-      font-size: .68rem;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .viewer-swatches {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
-      gap: 8px;
-      padding: 0 24px 24px;
+    .option-card__title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
     }
 
     .swatch {
@@ -545,56 +439,29 @@
       padding: 10px 6px;
       border: 1.5px solid var(--border);
       border-radius: var(--r-md);
-      background: var(--surface);
-      cursor: pointer;
-      transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-spring), box-shadow var(--t-fast), opacity var(--t-fast);
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      animation: swatchIn .35s var(--t-spring) both;
-    }
-
-    .swatch:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    @keyframes swatchIn {
-      from {
-        opacity: 0;
-        transform: scale(.7)
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1)
-      }
-    }
-
-    .swatch:hover:not(:disabled) {
-      border-color: rgba(255, 255, 255, .2);
       background: var(--surface2);
-      transform: translateY(-2px)
+      cursor: pointer;
+      transition: all var(--t-fast);
+      user-select: none;
     }
 
-    .swatch:active:not(:disabled) {
-      transform: scale(.96)
+    .swatch:hover {
+      border-color: rgba(255, 255, 255, .2);
+      transform: translateY(-2px);
     }
 
     .swatch.active {
-      border-color: var(--swatch-hex);
-      background: var(--surface2);
-      box-shadow: 0 0 0 3px rgba(var(--swatch-rgb), .22), var(--shadow-sm)
+      border-color: var(--accent);
+      background: var(--surface3);
+      box-shadow: 0 0 0 2px var(--accent-dim);
     }
 
     .swatch__circle {
-      position: relative;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--swatch-hex) 50%, var(--swatch-alt) 50%);
       border: 2px solid rgba(255, 255, 255, .1);
-      flex-shrink: 0;
+      position: relative;
     }
 
     .swatch__circle::after {
@@ -604,8 +471,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      color: var(--swatch-check, #fff);
+      font-size: 14px;
       opacity: 0;
       transition: opacity var(--t-fast);
     }
@@ -619,7 +485,6 @@
       font-weight: 500;
       color: var(--text-muted);
       text-align: center;
-      letter-spacing: .03em;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -630,18 +495,20 @@
       color: var(--text)
     }
 
-    @media(max-width:820px) {
-      .viewer-stage {
-        min-height: 45vw
-      }
-
-      .viewer-panel {
-        max-height: 60vh
-      }
+    /* Footer de Navegación */
+    .builder-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      bottom: 0;
     }
 
     /* ═══════════════════════════════════════════════════
-       PÁGINA: PIN (acceso admin)
+       PÁGINAS ADMIN / PIN / TOASTS (Estilos Base Mantenidos)
     ═══════════════════════════════════════════════════ */
     .pin-page {
       align-items: center;
@@ -660,73 +527,11 @@
       text-align: center;
     }
 
-    .pin-icon {
-      font-size: 2.4rem;
-      margin-bottom: 20px
-    }
-
-    .pin-title {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      letter-spacing: .08em;
-      color: var(--accent)
-    }
-
-    .pin-subtitle {
-      margin-top: 8px;
-      font-size: .85rem;
-      color: var(--text-muted)
-    }
-
-    .pin-dots {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 28px 0 20px
-    }
-
-    .pin-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid var(--border2);
-      background: transparent;
-      transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-spring);
-    }
-
-    .pin-dot.filled {
-      background: var(--accent);
-      border-color: var(--accent);
-      transform: scale(1.15)
-    }
-
-    .pin-dot.error {
-      background: var(--danger);
-      border-color: var(--danger);
-      animation: shake .35s ease
-    }
-
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0)
-      }
-
-      25% {
-        transform: translateX(-5px)
-      }
-
-      75% {
-        transform: translateX(5px)
-      }
-    }
-
     .pin-keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-top: 8px
+      margin-top: 16px
     }
 
     .pin-key {
@@ -736,7 +541,7 @@
       background: var(--surface2);
       font-size: 1.2rem;
       font-weight: 500;
-      transition: background var(--t-fast), transform var(--t-spring), border-color var(--t-fast);
+      transition: all var(--t-fast);
     }
 
     .pin-key:hover {
@@ -748,9 +553,30 @@
       transform: scale(.94)
     }
 
-    .pin-key.del {
-      font-size: .9rem;
-      color: var(--text-muted)
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0
+    }
+
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border2);
+      transition: all var(--t-fast);
+    }
+
+    .pin-dot.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.15)
+    }
+
+    .pin-dot.error {
+      background: var(--danger);
+      border-color: var(--danger);
     }
 
     .pin-error-msg {
@@ -760,9 +586,7 @@
       min-height: 1.1em
     }
 
-    /* ═══════════════════════════════════════════════════
-       PÁGINA: ADMIN
-    ═══════════════════════════════════════════════════ */
+    /* Admin Estilos Resumidos */
     .admin-layout {
       display: grid;
       grid-template-columns: 220px 1fr;
@@ -792,31 +616,21 @@
       gap: 10px;
       padding: 11px 22px;
       font-size: .85rem;
-      letter-spacing: .03em;
       color: var(--text-muted);
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
       text-align: left;
       border-left: 3px solid transparent;
-      transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+      transition: all var(--t-fast);
     }
 
-    .admin-nav-item:hover {
-      color: var(--text);
-      background: var(--surface2)
+    .admin-nav-item:hover,
+    .admin-nav-item.active {
+      color: var(--accent);
+      background: var(--surface2);
     }
 
     .admin-nav-item.active {
-      color: var(--accent);
       border-left-color: var(--accent);
-      background: var(--accent-dim)
-    }
-
-    .admin-nav-item .nav-icon {
-      font-size: 1rem;
-      flex-shrink: 0
+      background: var(--accent-dim);
     }
 
     .admin-content {
@@ -832,20 +646,6 @@
       display: block
     }
 
-    .admin-section-title {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      letter-spacing: .06em;
-      margin-bottom: 4px
-    }
-
-    .admin-section-sub {
-      font-size: .83rem;
-      color: var(--text-muted);
-      margin-bottom: 28px
-    }
-
-    /* Formularios admin */
     .form-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -854,27 +654,10 @@
       margin-bottom: 28px
     }
 
-    .form-card h3 {
-      font-size: .95rem;
-      font-weight: 600;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px
-    }
-
-    @media(max-width:560px) {
-      .form-row {
-        grid-template-columns: 1fr
-      }
     }
 
     .field {
@@ -886,115 +669,43 @@
 
     .field label {
       font-size: .75rem;
-      letter-spacing: .08em;
       text-transform: uppercase;
       color: var(--text-muted)
     }
 
     .field input,
-    .field select,
-    .field textarea {
+    .field select {
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: var(--r-sm);
       padding: 10px 14px;
       font-size: .88rem;
       color: var(--text);
-      transition: border-color var(--t-fast);
-      outline: none;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--border2)
-    }
-
-    .field textarea {
-      resize: vertical;
-      min-height: 80px
     }
 
     .field small {
       font-size: .72rem;
       color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    .field input[type="color"] {
-      padding: 4px 8px;
-      height: 40px;
-      cursor: pointer
-    }
-
-    /* Botones admin */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border-radius: var(--r-sm);
-      font-size: .85rem;
-      font-weight: 500;
-      letter-spacing: .04em;
-      transition: all var(--t-fast);
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0d0d0d
-    }
-
-    .btn-primary:hover {
-      background: #edd98e;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(226, 201, 126, .25)
-    }
-
-    .btn-primary:active {
-      transform: none
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-    }
-
-    .btn-outline:hover {
-      background: var(--accent-dim);
     }
 
     .btn-danger {
       background: var(--danger-dim);
       color: var(--danger);
-      border: 1px solid rgba(224, 92, 92, .25)
+      border: 1px solid rgba(224, 92, 92, .25);
+      padding: 8px 16px;
+      border-radius: var(--r-sm);
+      font-size: .85rem;
     }
 
-    .btn-danger:hover {
-      background: rgba(224, 92, 92, .2)
-    }
-
-    .btn-sm {
-      padding: 6px 14px;
-      font-size: .78rem
-    }
-
-    /* Lista de ítems admin */
     .admin-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-top: 4px
     }
 
     .admin-item {
       display: grid;
       grid-template-columns: 1fr auto;
-      align-items: center;
       gap: 12px;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1002,37 +713,7 @@
       padding: 14px 18px;
     }
 
-    .admin-item__info {
-      display: flex;
-      flex-direction: column;
-      gap: 3px
-    }
-
-    .admin-item__name {
-      font-size: .9rem;
-      font-weight: 500
-    }
-
-    .admin-item__meta {
-      font-size: .75rem;
-      color: var(--text-muted)
-    }
-
-    .admin-item__actions {
-      display: flex;
-      gap: 8px;
-      align-items: center
-    }
-
-    .admin-item__swatch {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, .12);
-      flex-shrink: 0
-    }
-
-    /* Toast */
+    /* Toasts & Spinners */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -1043,12 +724,10 @@
       border-radius: var(--r-md);
       padding: 12px 22px;
       font-size: .85rem;
-      letter-spacing: .03em;
       box-shadow: var(--shadow-md);
       z-index: 9999;
-      transition: transform .3s var(--t-spring), opacity .3s ease;
+      transition: all .3s var(--t-spring);
       opacity: 0;
-      white-space: nowrap;
     }
 
     .toast.show {
@@ -1066,78 +745,11 @@
       color: var(--danger)
     }
 
-    .color-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px
-    }
-
-    .color-chip {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255, 255, 255, .1)
-    }
-
-    .img-preview-wrap {
-      background: var(--surface2);
-      border: 1px dashed var(--border2);
-      border-radius: var(--r-md);
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .img-preview-wrap canvas,
-    .img-preview-wrap img {
-      max-height: 120px;
-      max-width: 100%;
-      object-fit: contain
-    }
-
-    .img-preview-wrap .placeholder {
-      font-size: .75rem;
-      color: var(--text-dim);
-      letter-spacing: .06em;
-      text-align: center;
-    }
-
-    @media(max-width:700px) {
-      .admin-nav {
-        flex-direction: row;
-        padding: 0;
-        overflow-x: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border)
-      }
-
-      .admin-nav-item {
-        flex-direction: column;
-        gap: 4px;
-        padding: 12px 16px;
-        font-size: .72rem;
-        border-left: none;
-        border-bottom: 3px solid transparent;
-        white-space: nowrap
-      }
-
-      .admin-nav-item.active {
-        border-bottom-color: var(--accent);
-        border-left-color: transparent
-      }
-    }
-
-    /* Spinner General */
     .spinner {
       width: 20px;
       height: 20px;
       border: 2px solid var(--border2);
-      border-top-color: var(--text);
+      border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: inline-block;
@@ -1149,7 +761,6 @@
       }
     }
 
-    /* Spinner de carga inicial */
     #global-loader {
       position: fixed;
       inset: 0;
@@ -1172,262 +783,188 @@
       width: 40px;
       height: 40px;
       border-width: 3px;
-      border-top-color: var(--accent);
     }
 
-    #global-loader span {
-      font-family: var(--font-display);
-      letter-spacing: 0.1em;
-      color: var(--accent);
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      text-align: center;
+      gap: 10px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ═══════ PANTALLA DE CARGA INICIAL ═══════ -->
+  <!-- ═══════ CARGA INICIAL ═══════ -->
   <div id="global-loader">
     <div class="spinner"></div>
-    <span>CONECTANDO A LA NUBE...</span>
+    <span style="font-family: var(--font-display); letter-spacing: 0.1em; color: var(--accent);">CONECTANDO...</span>
   </div>
 
   <!-- ═══════ TOAST ═══════ -->
-  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+  <div class="toast" id="toast" role="alert"></div>
 
   <!-- ═══════════════════════════════════════════════════
-       PÁGINA: CATÁLOGO
+       PÁGINA: HOME (Landing Page)
   ═══════════════════════════════════════════════════ -->
-  <div class="page active" id="page-catalog">
+  <div class="page active" id="page-home">
     <header class="site-header">
-      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
-        <span class="brand-mark">POLO</span>
-        <span class="brand-sub">STUDIO</span>
+      <a class="brand" href="#" onclick="window.APP.showHome();return false">
+        <span class="brand-mark">POLO</span><span class="brand-sub">STUDIO</span>
       </a>
       <div class="header-actions">
-        <!-- BOTÓN OCULTO POR DEFECTO -->
         <button id="btn-admin" class="btn-ghost" style="display: none;" onclick="window.APP.showPin()">⚙ Admin</button>
       </div>
     </header>
-    <div class="catalog-hero">
-      <div class="catalog-hero-text">
-        <h1>Colección<br>de Polos</h1>
-        <p>Selecciona una polo para ver todos los colores disponibles en tiempo real.</p>
-      </div>
-      <!-- MEJORA: Buscador implementado -->
-      <div class="catalog-search-wrap">
-        <input type="text" id="catalog-search" placeholder="Buscar modelo o color..." aria-label="Buscar polos" />
-      </div>
-    </div>
-    <div class="catalog-grid" id="catalog-grid" role="region" aria-label="Lista de modelos">
-      <!-- Contenido renderizado por JS -->
-    </div>
+    <main class="home-hero">
+      <h1>Crea tu Polo<br>Perfecta</h1>
+      <p>Personaliza cada detalle, desde el tipo de cuello hasta el color de las mangas. Diseña en tiempo real y haz que
+        tu marca destaque.</p>
+      <button class="btn-primary" style="font-size: 1.1rem; padding: 16px 36px;" onclick="window.APP.startBuilder()">
+        Comenzar a Diseñar <span>→</span>
+      </button>
+    </main>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
-       PÁGINA: VISUALIZADOR
+       PÁGINA: CONFIGURADOR (Builder)
   ═══════════════════════════════════════════════════ -->
-  <div class="page" id="page-viewer">
+  <div class="page" id="page-builder">
     <header class="site-header">
-      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
-        <span class="brand-mark">POLO</span>
-        <span class="brand-sub">STUDIO</span>
+      <a class="brand" href="#" onclick="window.APP.showHome();return false">
+        <span class="brand-mark">POLO</span><span class="brand-sub">STUDIO</span>
       </a>
+      <button class="btn-ghost" onclick="window.APP.showHome()">✕ Salir</button>
     </header>
-    <div class="viewer-layout">
-      <div class="viewer-stage" aria-live="polite">
-        <div class="viewer-glow" id="viewer-glow"></div>
-        <canvas id="viewer-canvas" width="400" height="480" aria-label="Previsualización del polo"></canvas>
-        <!-- MEJORA: Estado de carga -->
-        <div class="viewer-loader" id="viewer-loader">
-          <div class="spinner"></div>
-          <span>Aplicando color...</span>
+
+    <div class="builder-layout">
+      <!-- Visor Gráfico -->
+      <div class="builder-stage">
+        <div class="viewer-glow" id="builder-glow"></div>
+        <canvas id="builder-canvas" width="400" height="480" aria-label="Previsualización 3D"></canvas>
+        <div class="viewer-loader" id="builder-loader">
+          <div class="spinner"></div><span>Renderizando...</span>
         </div>
       </div>
-      <div class="viewer-panel">
-        <button class="viewer-back" onclick="window.APP.showCatalog()" aria-label="Volver al catálogo">
-          Catálogo</button>
-        <div class="viewer-info">
-          <div class="viewer-polo-name" id="viewer-polo-name">Polo</div>
-          <div class="viewer-color-badge" id="viewer-badge">
-            <span class="viewer-badge-dot" id="viewer-badge-dot"></span>
-            <span class="viewer-badge-name" id="viewer-badge-name">Elige un color</span>
-          </div>
+
+      <!-- Panel de Controles a la Derecha -->
+      <div class="builder-panel">
+        <div class="builder-header">
+          <div class="step-indicator" id="step-indicator">Paso 1 de 6</div>
+          <h2 class="step-title" id="step-title">Título del Paso</h2>
+          <p class="step-desc" id="step-desc">Descripción del paso.</p>
         </div>
-        <div class="viewer-section-label">Colores disponibles</div>
-        <div class="viewer-swatches" id="viewer-swatches" role="listbox" aria-label="Paleta de colores"></div>
+
+        <div class="builder-content" id="step-content">
+          <!-- Contenido inyectado por JS según el paso -->
+        </div>
+
+        <div class="builder-footer">
+          <button class="btn-ghost" id="btn-prev-step" onclick="window.BUILDER.prevStep()">Atrás</button>
+          <button class="btn-primary" id="btn-next-step" onclick="window.BUILDER.nextStep()">Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
-       PÁGINA: PIN
+       PÁGINA: PIN & ADMIN (Mantenidas para la gestión)
   ═══════════════════════════════════════════════════ -->
   <div class="page pin-page" id="page-pin">
     <div class="pin-card">
       <div class="pin-icon">🔐</div>
       <div class="pin-title">Admin</div>
-      <div class="pin-subtitle">Ingresa tu PIN de acceso</div>
       <div class="pin-dots" id="pin-dots"></div>
       <div class="pin-keypad" id="pin-keypad"></div>
-      <div class="pin-error-msg" id="pin-error" aria-live="assertive"></div>
+      <div class="pin-error-msg" id="pin-error"></div>
       <button class="btn-ghost" style="width:100%;margin-top:16px;justify-content:center"
-        onclick="window.APP.showCatalog()">Cancelar</button>
+        onclick="window.APP.showHome()">Cancelar</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       PÁGINA: ADMIN
-  ═══════════════════════════════════════════════════ -->
   <div class="page" id="page-admin">
     <header class="site-header">
-      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
-        <span class="brand-mark">POLO</span>
-        <span class="brand-sub">STUDIO</span>
+      <a class="brand" href="#" onclick="window.APP.showHome();return false">
+        <span class="brand-mark">POLO</span><span class="brand-sub">STUDIO</span>
       </a>
       <div class="header-actions">
         <button class="btn-ghost" onclick="window.APP.logout()">Cerrar sesión</button>
       </div>
     </header>
     <div class="admin-layout">
-      <nav class="admin-nav" role="navigation" aria-label="Menú de administración">
-        <button class="admin-nav-item active" data-section="polos" onclick="window.ADMIN.switchSection('polos')">
-          <span class="nav-icon">👕</span>Polos
-        </button>
-        <button class="admin-nav-item" data-section="colors" onclick="window.ADMIN.switchSection('colors')">
-          <span class="nav-icon">🎨</span>Colores
-        </button>
-        <button class="admin-nav-item" data-section="settings" onclick="window.ADMIN.switchSection('settings')">
-          <span class="nav-icon">⚙️</span>Ajustes & Data
-        </button>
+      <nav class="admin-nav">
+        <button class="admin-nav-item active" data-section="polos" onclick="window.ADMIN.switchSection('polos')">👕
+          Diseños Base</button>
+        <button class="admin-nav-item" data-section="colors" onclick="window.ADMIN.switchSection('colors')">🎨 Paleta
+          Global</button>
+        <button class="admin-nav-item" data-section="settings" onclick="window.ADMIN.switchSection('settings')">⚙️
+          Ajustes</button>
       </nav>
       <div class="admin-content">
-
-        <!-- SECCIÓN: POLOS -->
+        <!-- POLOS -->
         <div class="admin-section active" id="section-polos">
-          <div class="admin-section-title">Catálogo de Polos</div>
-          <div class="admin-section-sub">Agrega y administra los modelos del catálogo (Sincronizado en la Nube).</div>
+          <div class="admin-section-title">Diseños Base</div>
+          <div class="admin-section-sub">Sube las plantillas de modelos (Cuerpo y Máscara de detalles).</div>
           <div class="form-card">
-            <h3>Agregar nueva polo</h3>
-            <div class="field">
-              <label for="polo-name">Nombre del modelo *</label>
-              <input type="text" id="polo-name" placeholder="Ej: Polo Pique Classic" maxlength="60" />
-            </div>
+            <h3>Nuevo Diseño Base</h3>
+            <div class="field"><label>Nombre *</label><input type="text" id="polo-name"
+                placeholder="Ej: Polo Clásica" /></div>
             <div class="form-row">
-              <div class="field">
-                <label for="polo-url">URL Imagen Base (Cuerpo) *</label>
-                <input type="url" id="polo-url" placeholder="https://..." oninput="window.ADMIN.previewImage()" />
-                <small>Sube el PNG del cuerpo de la camiseta.</small>
-              </div>
-              <div class="field">
-                <label for="polo-overlay-url">URL Imagen Detalles (Cuello/Puños)</label>
-                <input type="url" id="polo-overlay-url" placeholder="https://..."
-                  oninput="window.ADMIN.previewImage()" />
-                <small>Opcional: Sube un PNG (mismo tamaño que el base) que solo contenga el cuello o los puños.</small>
-              </div>
+              <div class="field"><label>URL Cuerpo (Base) *</label><input type="url" id="polo-url"
+                  placeholder="https://..." /></div>
+              <div class="field"><label>URL Detalles (Cuellos/Puños)</label><input type="url" id="polo-overlay-url"
+                  placeholder="https://..." /></div>
             </div>
-            <div class="field">
-              <label>Vista previa</label>
-              <div class="img-preview-wrap" id="polo-preview-wrap">
-                <span class="placeholder">La imagen aparecerá aquí</span>
-              </div>
-            </div>
-            <div class="field">
-              <label>Colores habilitados para este modelo</label>
-              <div id="polo-color-checkboxes" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px"></div>
-            </div>
-            <button class="btn btn-primary" onclick="window.ADMIN.addPolo()">+ Agregar polo</button>
+            <button class="btn-primary" style="margin-top: 10px;" onclick="window.ADMIN.addPolo()">Guardar Diseño
+              Base</button>
           </div>
-
-          <div class="admin-section-title" style="font-size:1.3rem;margin-bottom:12px">Modelos actuales</div>
           <div class="admin-list" id="polo-list"></div>
         </div>
-
-        <!-- SECCIÓN: COLORES -->
+        <!-- COLORS -->
         <div class="admin-section" id="section-colors">
-          <div class="admin-section-title">Gestión de Colores</div>
-          <div class="admin-section-sub">Define la paleta global disponible en la nube.</div>
-          <div class="form-card">
-            <h3>Agregar color</h3>
-            <div class="field">
-              <label for="color-name">Nombre del color *</label>
-              <input type="text" id="color-name" placeholder="Ej: Blanco con Cuello Marino" maxlength="30" />
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label for="color-hex">Color Principal (Cuerpo) *</label>
-                <input type="color" id="color-hex" value="#F5F0E8" />
-              </div>
-              <div class="field">
-                <label for="color-hex-alt">Color Detalles (Cuello/Puños)</label>
-                <input type="color" id="color-hex-alt" value="#1B2E4B" />
-                <small>Solo se aplicará si la Polo tiene una imagen de detalles asignada.</small>
-              </div>
-            </div>
-            <button class="btn btn-primary" onclick="window.ADMIN.addColor()">+ Agregar color</button>
+          <div class="admin-section-title">Paleta de Colores Global</div>
+          <div class="admin-section-sub">Define los colores que los clientes podrán usar para el cuerpo o detalles.
           </div>
-
-          <div class="admin-section-title" style="font-size:1.3rem;margin-bottom:12px">Colores actuales</div>
+          <div class="form-card">
+            <h3>Agregar Color</h3>
+            <div class="form-row">
+              <div class="field"><label>Nombre del Color *</label><input type="text" id="color-name"
+                  placeholder="Ej: Azul Naval" /></div>
+              <div class="field"><label>Código (Hex) *</label><input type="color" id="color-hex" value="#1B2E4B" />
+              </div>
+            </div>
+            <button class="btn-primary" onclick="window.ADMIN.addColor()">Agregar a la paleta</button>
+          </div>
           <div class="admin-list" id="color-list"></div>
         </div>
-
-        <!-- SECCIÓN: AJUSTES & DATA -->
+        <!-- SETTINGS -->
         <div class="admin-section" id="section-settings">
-          <div class="admin-section-title">Ajustes & Datos</div>
-          <div class="admin-section-sub">Configura el acceso y respalda tu catálogo de la nube.</div>
-
+          <div class="admin-section-title">Ajustes Generales</div>
           <div class="form-card">
-            <h3>Cambiar PIN de acceso</h3>
-            <div class="form-row">
-              <div class="field">
-                <label for="pin-current">PIN actual</label>
-                <input type="password" id="pin-current" placeholder="PIN actual" maxlength="6" inputmode="numeric" />
-              </div>
-              <div class="field">
-                <label for="pin-new">Nuevo PIN (4-6 dígitos)</label>
-                <input type="password" id="pin-new" placeholder="Nuevo PIN" maxlength="6" inputmode="numeric" />
-              </div>
-            </div>
-            <button class="btn btn-primary" onclick="window.ADMIN.changePin()">Actualizar PIN</button>
-          </div>
-
-          <div class="form-card">
-            <h3>📦 Respaldo Local (Importar / Exportar)</h3>
-            <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px">Guarda una copia de seguridad en tu
-              PC de los datos alojados en la nube.</p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn btn-primary" onclick="window.ADMIN.exportData()">Descargar Backup (JSON)</button>
-              <input type="file" id="import-file" accept=".json" style="display:none"
-                onchange="window.ADMIN.importData(event)">
-              <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">Subir Backup
-                (Restaurar en la Nube)</button>
-            </div>
-          </div>
-
-          <div class="form-card" style="border-color:rgba(224,92,92,.2)">
-            <h3 style="color:var(--danger)">Zona de peligro</h3>
-            <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px">Estas acciones vaciarán la base de
-              datos EN LA NUBE para todos los usuarios.</p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn btn-danger btn-sm" onclick="window.ADMIN.clearPolos()">🗑 Eliminar todos los
-                modelos</button>
-              <button class="btn btn-danger btn-sm" onclick="window.ADMIN.clearColors()">🗑 Eliminar todos los
-                colores</button>
+            <h3>Zona de peligro</h3>
+            <div style="display:flex;gap:10px;">
+              <button class="btn-danger" onclick="window.ADMIN.clearPolos()">Borrar Diseños</button>
+              <button class="btn-danger" onclick="window.ADMIN.clearColors()">Borrar Paleta</button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- CONEXIÓN FIREBASE EN LA NUBE -->
+  <!-- CONEXIÓN FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
     /* ═══════════════════════════════════════════════════
-       UTILS — Funciones de utilidad pura (DRY)
+       UTILS & CORE
     ═══════════════════════════════════════════════════ */
     const UTILS = (() => {
       const createElement = (tag, classNames = '', textContent = '') => {
@@ -1436,56 +973,21 @@
         if (textContent) el.textContent = textContent;
         return el;
       };
-
-      const debounce = (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-          const later = () => { clearTimeout(timeout); func(...args); };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-        };
-      };
-
-      const downloadJSON = (obj, filename) => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", filename);
-        dlAnchorElem.click();
-        dlAnchorElem.remove();
-      };
-
-      return { createElement, debounce, downloadJSON };
+      return { createElement };
     })();
 
-    /* ═══════════════════════════════════════════════════
-       CONFIG
-    ═══════════════════════════════════════════════════ */
-    const CFG = {
-      SESSION_KEY: 'ps_session',
-      LOCKOUT_KEY: 'ps_lockout',
-      DEFAULT_PIN: '1234',
-      SESSION_TTL: 30 * 60 * 1000,
-      LOCKOUT_TTL: 60 * 1000,
-      MAX_ATTEMPTS: 5
+    const CFG = { SESSION_KEY: 'ps_session', LOCKOUT_KEY: 'ps_lockout', DEFAULT_PIN: '1234', SESSION_TTL: 1800000, LOCKOUT_TTL: 60000, MAX_ATTEMPTS: 5 };
+
+    const CRYPTO = {
+      hash: async (pin) => {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
     };
 
     /* ═══════════════════════════════════════════════════
-       CRYPTO — Hash SHA-256
+       FIREBASE HYBRID INIT
     ═══════════════════════════════════════════════════ */
-    const CRYPTO = (() => {
-      const hash = async (pin) => {
-        const enc = new TextEncoder();
-        const buf = await crypto.subtle.digest('SHA-256', enc.encode(pin));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      };
-      return { hash };
-    })();
-
-    /* ═══════════════════════════════════════════════════
-       FIREBASE INITIALIZATION (SOPORTA CANVAS Y PRODUCCIÓN)
-    ═══════════════════════════════════════════════════ */
-    // 👇 1. PEGA TUS DATOS DE FIREBASE AQUÍ PARA CUANDO LO SUBAS A GITHUB 👇
     const miConfiguracionFirebase = {
       apiKey: "AIzaSyCLAcSSWdHsZBu5y58qhAu3dQf-dmWBnvw",
       authDomain: "polo-studio-app.firebaseapp.com",
@@ -1494,12 +996,8 @@
       messagingSenderId: "561143462000",
       appId: "1:561143462000:web:28d91b0d2ed910bb22dcb5"
     };
-
-    // Ponle un apodo a tu base de datos (se usa para organizar las colecciones en tu Firestore)
     const miNombreDeApp = 'polo-studio-oficial';
-    // 👆 ══════════════════════════════════════════════════════════════ 👆
 
-    // Lógica Híbrida: Detecta si estás probando aquí en la web (Canvas) o en GitHub.
     const isCanvasEnv = typeof __firebase_config !== 'undefined';
     const firebaseConfig = isCanvasEnv ? JSON.parse(__firebase_config) : miConfiguracionFirebase;
     const appId = isCanvasEnv && typeof __app_id !== 'undefined' ? __app_id : miNombreDeApp;
@@ -1508,14 +1006,11 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Colecciones estandarizadas
     const polosRef = collection(db, 'artifacts', appId, 'public', 'data', 'polos');
     const colorsRef = collection(db, 'artifacts', appId, 'public', 'data', 'colors');
     const settingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'auth');
 
-    // Inicializar Auth de manera segura
     const initAuth = async () => {
-      // Usa el token de la plataforma si estás en el Canvas, de lo contrario inicia Anónimo puro (Para GitHub)
       if (isCanvasEnv && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
         await signInWithCustomToken(auth, __initial_auth_token);
       } else {
@@ -1524,1003 +1019,454 @@
     };
 
     /* ═══════════════════════════════════════════════════
-       STORE CLOUD — CRUD conectado a Firestore
+       STORE
     ═══════════════════════════════════════════════════ */
     const STORE = (() => {
-      let state = {
-        polos: [],
-        colors: [],
-        pinHash: null,
-        pinLen: 4
-      };
+      let state = { polos: [], colors: [], pinHash: null, pinLen: 4 };
+      const _get = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+      const _set = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 
-      const _get = (key, def) => {
-        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
-      };
-      const _set = (key, val) => {
-        try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; }
-      };
-
-      // Control Local
-      const getLockout = () => _get(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
-      const setLockout = (obj) => _set(CFG.LOCKOUT_KEY, obj);
-      const clearLockout = () => _set(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
-      const getSession = () => _get(CFG.SESSION_KEY, null);
-      const setSession = () => _set(CFG.SESSION_KEY, Date.now());
-      const clearSession = () => localStorage.removeItem(CFG.SESSION_KEY);
-      const isSessionOk = () => { const s = getSession(); return s && (Date.now() - s) < CFG.SESSION_TTL; };
-
-      // Lectura en Memoria (Actualizada por Firestore en tiempo real)
       const getPolos = () => state.polos;
       const getColors = () => state.colors;
-      const getPinHash = () => state.pinHash;
-      const getPinLen = () => state.pinLen;
 
-      // Escrituras Asíncronas en la Nube
-      const addColor = async (c) => await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'colors', c.id), c);
-      const delColor = async (id) => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'colors', id));
-
-      const addPolo = async (p) => await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', p.id), p);
-      const delPolo = async (id) => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', id));
-
-      const updatePolosBatch = async (polosArray) => {
-        // En una app más grande se usaría writeBatch. Aquí para simplicidad y mantenerlo en una función.
-        for (const p of polosArray) {
-          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', p.id), p);
-        }
-      };
-
-      const setPinData = async (hash, len) => {
-        await setDoc(settingsRef, { pinHash: hash, pinLen: len });
-      };
-
-      const exportDataObj = () => ({
-        version: 2,
-        colors: state.colors,
-        polos: state.polos,
-        timestamp: new Date().toISOString()
-      });
-
-      const importDataObj = async (dataObj) => {
-        if (!dataObj || !Array.isArray(dataObj.colors) || !Array.isArray(dataObj.polos)) throw new Error("Formato inválido");
-
-        UI.toast('Subiendo a la nube, por favor espera...', 'success');
-
-        // 1. Borrar existentes
-        for (const c of state.colors) await delColor(c.id);
-        for (const p of state.polos) await delPolo(p.id);
-
-        // 2. Subir nuevos
-        for (const c of dataObj.colors) await addColor(c);
-        for (const p of dataObj.polos) await addPolo(p);
-      };
-
-      // Si no hay PIN, seteamos el de por defecto.
-      const ensureDefaultPin = async () => {
-        if (!state.pinHash) {
-          const h = await CRYPTO.hash(CFG.DEFAULT_PIN);
-          await setPinData(h, CFG.DEFAULT_PIN.length);
-        }
-      };
+      const addColor = async (c) => await setDoc(doc(colorsRef, c.id), c);
+      const delColor = async (id) => await deleteDoc(doc(colorsRef, id));
+      const addPolo = async (p) => await setDoc(doc(polosRef, p.id), p);
+      const delPolo = async (id) => await deleteDoc(doc(polosRef, id));
+      const setPinData = async (h, l) => await setDoc(settingsRef, { pinHash: h, pinLen: l });
+      const ensureDefaultPin = async () => { if (!state.pinHash) await setPinData(await CRYPTO.hash(CFG.DEFAULT_PIN), CFG.DEFAULT_PIN.length); };
 
       return {
-        state, getLockout, setLockout, clearLockout,
-        getColors, addColor, delColor,
-        getPolos, addPolo, delPolo, updatePolosBatch,
-        getPinHash, getPinLen, setPinData, ensureDefaultPin,
-        getSession, setSession, clearSession, isSessionOk,
-        exportDataObj, importDataObj
+        state, getPolos, getColors, addColor, delColor, addPolo, delPolo,
+        getLockout: () => _get(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 }),
+        setLockout: (o) => _set(CFG.LOCKOUT_KEY, o),
+        clearLockout: () => _set(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 }),
+        getSession: () => _get(CFG.SESSION_KEY, null),
+        setSession: () => _set(CFG.SESSION_KEY, Date.now()),
+        clearSession: () => localStorage.removeItem(CFG.SESSION_KEY),
+        isSessionOk: () => { const s = _get(CFG.SESSION_KEY, null); return s && (Date.now() - s) < CFG.SESSION_TTL; },
+        getPinHash: () => state.pinHash, getPinLen: () => state.pinLen, ensureDefaultPin
       };
     })();
 
     /* ═══════════════════════════════════════════════════
-       COLORIZER — Core de manipulación de Canvas
+       COLORIZER (Canvas Engine)
     ═══════════════════════════════════════════════════ */
     const COLORIZER = (() => {
       const _imgCache = new Map();
 
       const _loadImage = (url) => new Promise((res, rej) => {
         if (!url) return res(null);
-
-        // Si la tenemos en caché local, la devolvemos al instante
         if (_imgCache.has(url)) { res(_imgCache.get(url)); return; }
 
-        let isDrive = false;
-        let driveUrl = '';
-
-        // Detectar si es un enlace de Google Drive
+        let isDrive = false, driveUrl = '';
         const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (driveMatch) { isDrive = true; driveUrl = 'https://drive.google.com/uc?export=download&id=' + driveMatch[1]; }
 
-        if (driveMatch) {
-          isDrive = true;
-          const fileId = driveMatch[1];
-          // Formato estándar de descarga de Drive
-          driveUrl = 'https://drive.google.com/uc?export=download&id=' + fileId;
-        }
+        const tryLoad = (src) => new Promise((resolve, reject) => {
+          const img = new Image(); img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img); img.onerror = () => reject(); img.src = src;
+        });
 
-        // Función base para intentar cargar una imagen
-        const tryLoad = (src) => {
-          return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous'; // Fundamental para el CORS en el Canvas
-            img.onload = () => resolve(img);
-            img.onerror = () => reject(new Error('Fallo al cargar: ' + src));
-            img.src = src;
-          });
-        };
-
-        // Lógica de Fallbacks (Respaldos en Cascada)
         const loadWithFallbacks = async () => {
           if (!isDrive) {
-            // Si NO es de Drive (ej. ImgBB), intenta cargarla directo
-            try {
-              const img = await tryLoad(url);
-              _imgCache.set(url, img);
-              res(img);
-            } catch (e) {
-              // Si falla (probablemente por CORS), intenta pasarla por el proxy wsrv
-              try {
-                const imgProxy = await tryLoad('https://wsrv.nl/?url=' + encodeURIComponent(url) + '&cors=1');
-                _imgCache.set(url, imgProxy);
-                res(imgProxy);
-              } catch (e2) {
-                rej(e2);
-              }
-            }
+            try { const img = await tryLoad(url); _imgCache.set(url, img); res(img); }
+            catch { try { const imgP = await tryLoad('https://wsrv.nl/?url=' + encodeURIComponent(url) + '&cors=1'); _imgCache.set(url, imgP); res(imgP); } catch (e) { rej(e); } }
             return;
           }
-
-          // 🚨 Si ES de Google Drive, tenemos 3 proxies de respaldo 🚨
-          // 1. wsrv.nl (El más rápido y estable para imágenes)
-          // 2. corsproxy.io (Excelente alternativo)
-          // 3. api.allorigins.win (El que usábamos antes, por si acaso)
-          const proxies = [
-            `https://wsrv.nl/?url=${encodeURIComponent(driveUrl)}&cors=1`,
-            `https://corsproxy.io/?${encodeURIComponent(driveUrl)}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`
-          ];
-
-          for (let i = 0; i < proxies.length; i++) {
-            try {
-              const img = await tryLoad(proxies[i]);
-              _imgCache.set(url, img); // Guardamos el éxito en caché
-              return res(img); // ¡Salió de la cascada con éxito!
-            } catch (err) {
-              console.warn(`Proxy ${i + 1} falló para imagen de Drive. Intentando el siguiente...`);
-            }
-          }
-
-          // Si los 3 proxies fallaron, lanzamos el error final
-          rej(new Error('Todos los servidores proxy fallaron para la imagen de Google Drive.'));
+          const proxies = [`https://wsrv.nl/?url=${encodeURIComponent(driveUrl)}&cors=1`, `https://corsproxy.io/?${encodeURIComponent(driveUrl)}`, `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`];
+          for (let p of proxies) { try { const img = await tryLoad(p); _imgCache.set(url, img); return res(img); } catch (e) { } }
+          rej(new Error('Proxy failed'));
         };
-
-        // Iniciamos la carga
         loadWithFallbacks();
       });
 
-      const _hexToRgb = (hex) => {
-        const c = hex.replace('#', '');
-        return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)];
-      };
+      const _hexToRgb = (hex) => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+      const hexToRgbStr = (h) => _hexToRgb(h).join(',');
+      const contrastColor = (h) => { const [r, g, b] = _hexToRgb(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff'; };
 
-      const hexToRgbStr = (hex) => _hexToRgb(hex).join(', ');
-      const contrastColor = (hex) => {
-        const [r, g, b] = _hexToRgb(hex);
-        return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff';
-      };
-
-      const _applyMultiplyFilter = (ctx, canvasWidth, canvasHeight, hexColor) => {
-        const [tr, tg, tb] = _hexToRgb(hexColor);
-        const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
-          if (a < 10) continue;
-          data[i] = Math.round((r * tr) / 255);
-          data[i + 1] = Math.round((g * tg) / 255);
-          data[i + 2] = Math.round((b * tb) / 255);
+      const _applyMultiply = (ctx, w, h, hex) => {
+        const [tr, tg, tb] = _hexToRgb(hex);
+        const imgD = ctx.getImageData(0, 0, w, h), d = imgD.data;
+        for (let i = 0; i < d.length; i += 4) {
+          if (d[i + 3] < 10) continue;
+          d[i] = Math.round(d[i] * tr / 255); d[i + 1] = Math.round(d[i + 1] * tg / 255); d[i + 2] = Math.round(d[i + 2] * tb / 255);
         }
-        ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imgD, 0, 0);
       };
 
-      const colorize = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
-        if (!canvas || !imageUrl) return;
+      const colorize = async (canvas, baseObj, baseHex, overlayHex) => {
+        if (!canvas || !baseObj) return;
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        let imgBase, imgOverlay;
 
         try {
-          imgBase = await _loadImage(imageUrl);
-          if (overlayUrl) imgOverlay = await _loadImage(overlayUrl);
-        } catch (e) {
+          const imgBase = await _loadImage(baseObj.imageUrl);
+          const imgOverlay = baseObj.overlayUrl ? await _loadImage(baseObj.overlayUrl) : null;
+
+          const ratio = imgBase.naturalWidth / imgBase.naturalHeight;
+          if (ratio > 1) { canvas.width = 400; canvas.height = Math.round(400 / ratio); } else { canvas.height = 480; canvas.width = Math.round(480 * ratio); }
+
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.fillStyle = 'rgba(224,92,92,0.1)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.fillStyle = '#e05c5c';
-          ctx.font = '14px DM Sans, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('❌ Imagen no disponible', canvas.width / 2, canvas.height / 2);
-          return;
-        }
+          ctx.drawImage(imgBase, 0, 0, canvas.width, canvas.height);
+          if (baseHex) _applyMultiply(ctx, canvas.width, canvas.height, baseHex);
 
-        const ratio = imgBase.naturalWidth / imgBase.naturalHeight;
-        if (ratio > 1) { canvas.width = 400; canvas.height = Math.round(400 / ratio); }
-        else { canvas.height = 480; canvas.width = Math.round(480 * ratio); }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(imgBase, 0, 0, canvas.width, canvas.height);
-        _applyMultiplyFilter(ctx, canvas.width, canvas.height, hex);
-
-        if (imgOverlay && hexAlt) {
-          const tempCanvas = document.createElement('canvas');
-          tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
-          const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
-          tempCtx.drawImage(imgOverlay, 0, 0, tempCanvas.width, tempCanvas.height);
-          _applyMultiplyFilter(tempCtx, tempCanvas.width, tempCanvas.height, hexAlt);
-          ctx.drawImage(tempCanvas, 0, 0);
+          if (imgOverlay && overlayHex) {
+            const tCan = document.createElement('canvas'); tCan.width = canvas.width; tCan.height = canvas.height;
+            const tCtx = tCan.getContext('2d', { willReadFrequently: true });
+            tCtx.drawImage(imgOverlay, 0, 0, tCan.width, tCan.height);
+            _applyMultiply(tCtx, tCan.width, tCan.height, overlayHex);
+            ctx.drawImage(tCan, 0, 0);
+          }
+        } catch (e) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'rgba(224,92,92,0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#e05c5c'; ctx.font = '14px DM Sans'; ctx.textAlign = 'center'; ctx.fillText('❌ Error de Imagen', canvas.width / 2, canvas.height / 2);
         }
       };
 
-      const colorizeThumbnail = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
-        canvas.width = 200; canvas.height = 240;
-        await colorize(canvas, imageUrl, hex, overlayUrl, hexAlt);
-      };
-
-      return { colorize, colorizeThumbnail, hexToRgbStr, contrastColor };
-    })();
-
-    /* ═══════════════════════════════════════════════════
-       AUTH — Autenticación para Entrar al Panel
-    ═══════════════════════════════════════════════════ */
-    const AUTH = (() => {
-      const _isLocked = () => {
-        const lo = STORE.getLockout();
-        if (lo.until && Date.now() < lo.until) return true;
-        if (lo.until && Date.now() >= lo.until) STORE.clearLockout();
-        return false;
-      };
-
-      const _lockoutSecondsLeft = () => {
-        const lo = STORE.getLockout();
-        if (!lo.until) return 0;
-        return Math.max(0, Math.ceil((lo.until - Date.now()) / 1000));
-      };
-
-      const verify = async (pin) => {
-        if (_isLocked()) return { status: 'locked', seconds: _lockoutSecondsLeft() };
-        const inputHash = await CRYPTO.hash(pin);
-        const storedHash = STORE.getPinHash();
-
-        if (inputHash === storedHash) {
-          STORE.clearLockout();
-          STORE.setSession();
-          return { status: 'ok' };
-        }
-
-        const lo = STORE.getLockout();
-        const attempts = (lo.attempts || 0) + 1;
-        if (attempts >= CFG.MAX_ATTEMPTS) {
-          STORE.setLockout({ attempts, until: Date.now() + CFG.LOCKOUT_TTL });
-          return { status: 'locked', seconds: CFG.LOCKOUT_TTL / 1000 };
-        }
-        STORE.setLockout({ attempts, until: 0 });
-        return { status: 'fail', remaining: CFG.MAX_ATTEMPTS - attempts };
-      };
-
-      const changePin = async (current, next) => {
-        if (!/^\d{4,6}$/.test(next)) return false;
-        const currentHash = await CRYPTO.hash(current);
-        if (currentHash !== STORE.getPinHash()) return false;
-        const nextHash = await CRYPTO.hash(next);
-        await STORE.setPinData(nextHash, next.length);
-        return true;
-      };
-
-      const logout = () => STORE.clearSession();
-      const isAuth = () => STORE.isSessionOk();
-      const lockoutSecondsLeft = _lockoutSecondsLeft;
-
-      return { verify, changePin, logout, isAuth, lockoutSecondsLeft };
+      return { colorize, hexToRgbStr, contrastColor, _loadImage };
     })();
 
     /* ═══════════════════════════════════════════════════
        UI HELPERS
     ═══════════════════════════════════════════════════ */
     const UI = (() => {
-      let _toastTimer = null;
-      const showPage = (id) => {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        const pg = document.getElementById(id);
-        if (pg) pg.classList.add('active');
-        window.scrollTo(0, 0);
+      let _toastTimer;
+      return {
+        showPage: (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id)?.classList.add('active'); },
+        toast: (msg, type = '') => { const el = document.getElementById('toast'); el.textContent = msg; el.className = 'toast show ' + type; clearTimeout(_toastTimer); _toastTimer = setTimeout(() => el.classList.remove('show'), 3000); },
+        confirm: (msg) => window.confirm(msg)
       };
-      const toast = (msg, type = '') => {
-        const el = document.getElementById('toast');
-        el.textContent = msg;
-        el.className = 'toast show ' + type;
-        clearTimeout(_toastTimer);
-        _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-      };
-      const confirm = (msg) => window.confirm(msg);
-
-      // Trigger re-render of active screen
-      const refreshActiveScreen = () => {
-        if (document.getElementById('page-catalog').classList.contains('active')) CATALOG.render();
-        if (document.getElementById('page-admin').classList.contains('active')) {
-          const activeSec = document.querySelector('.admin-section.active');
-          if (activeSec) ADMIN.refreshSection(activeSec.id.replace('section-', ''));
-        }
-      };
-
-      return { showPage, toast, confirm, refreshActiveScreen };
     })();
 
     /* ═══════════════════════════════════════════════════
-       CATALOG VIEW
+       BUILDER CORE (Máquina de estados paso a paso)
     ═══════════════════════════════════════════════════ */
-    const CATALOG = (() => {
-      const _searchInput = document.getElementById('catalog-search');
-      let _currentFilter = '';
+    const BUILDER = (() => {
+      let _step = 1;
+      let _isProcessing = false;
 
-      _searchInput.addEventListener('input', UTILS.debounce((e) => {
-        _currentFilter = e.target.value.toLowerCase().trim();
-        render();
-      }, 300));
+      // El estado central del diseño del cliente
+      const state = {
+        design: null,     // Objeto polo de DB
+        placket: null,    // 'botones' | 'cremallera'
+        baseColor: null,  // Objeto color de DB
+        collarDesign: null, // 'clasico' | 'deportivo' | 'mandarin'
+        detailColor: null, // Objeto color de DB
+        logoPos: null     // 'izquierdo' | 'derecho' | 'espalda'
+      };
 
-      const render = async () => {
-        const grid = document.getElementById('catalog-grid');
+      // Configuración dura de las opciones UI (Escalable)
+      const optionsConfig = {
+        plackets: [
+          { id: 'botones', label: 'Botones Clásicos', icon: '🔘' },
+          { id: 'cremallera', label: 'Cremallera / Cierre', icon: '🤐' }
+        ],
+        collars: [
+          { id: 'clasico', label: 'Cuello Clásico', icon: '👔' },
+          { id: 'deportivo', label: 'Cuello Deportivo (V)', icon: '🏃' },
+          { id: 'mandarin', label: 'Cuello Mandarín (Mao)', icon: '🥋' }
+        ],
+        logos: [
+          { id: 'izquierdo', label: 'Pecho Izquierdo', icon: '🛡️' },
+          { id: 'derecho', label: 'Pecho Derecho', icon: '🛡️' },
+          { id: 'espalda', label: 'Espalda Central', icon: '🔙' }
+        ]
+      };
+
+      const start = () => {
         const polos = STORE.getPolos();
-        const colors = STORE.getColors();
-        const colorMap = Object.fromEntries(colors.map(c => [c.id, c]));
+        if (!polos.length) return UI.toast('El catálogo está vacío, no se puede iniciar.', 'error');
 
-        grid.innerHTML = '';
+        // Reset state
+        _step = 1;
+        Object.keys(state).forEach(k => state[k] = null);
 
-        if (!polos.length) {
-          const emptyState = UTILS.createElement('div', 'catalog-empty');
-          emptyState.appendChild(UTILS.createElement('span', '', '👕'));
-          emptyState.appendChild(UTILS.createElement('p', '', 'El catálogo está vacío. El administrador aún no ha agregado polos a la nube.'));
-          grid.appendChild(emptyState);
+        UI.showPage('page-builder');
+        _renderCurrentStep();
+        _updateCanvas();
+      };
+
+      const _setProcessing = (val) => {
+        _isProcessing = val;
+        const loader = document.getElementById('builder-loader');
+        const canvas = document.getElementById('builder-canvas');
+        if (val) { loader.classList.add('active'); canvas.style.opacity = '0.5'; }
+        else { loader.classList.remove('active'); canvas.style.opacity = '1'; }
+        document.getElementById('btn-next-step').disabled = val;
+      };
+
+      const _updateCanvas = async () => {
+        if (!state.design) {
+          const ctx = document.getElementById('builder-canvas').getContext('2d');
+          ctx.clearRect(0, 0, 400, 480);
           return;
         }
+        _setProcessing(true);
+        // Si no hay color seleccionado aún, usa un gris neutro de previsualización
+        const bHex = state.baseColor ? state.baseColor.hex : '#E0E0E0';
+        const dHex = state.detailColor ? state.detailColor.hex : bHex;
 
-        const filteredPolos = polos.filter(p => {
-          const matchName = p.name.toLowerCase().includes(_currentFilter);
-          const matchColor = (p.colorIds || []).some(cid => {
-            const c = colorMap[cid];
-            return c && c.name.toLowerCase().includes(_currentFilter);
+        document.getElementById('builder-glow').style.background = `rgba(${COLORIZER.hexToRgbStr(bHex)}, 0.15)`;
+        await COLORIZER.colorize(document.getElementById('builder-canvas'), state.design, bHex, dHex);
+        _setProcessing(false);
+        _validateStep(); // Re-validar si se puede avanzar
+      };
+
+      /* Creadores de UI DRY */
+      const _createCard = (data, activeId, onClick) => {
+        const card = UTILS.createElement('div', `option-card ${data.id === activeId ? 'active' : ''}`);
+        const icon = UTILS.createElement('div', '', data.icon);
+        icon.style.fontSize = '2rem';
+        card.appendChild(icon);
+        card.appendChild(UTILS.createElement('div', 'option-card__title', data.label));
+        card.onclick = () => { onClick(data.id); _renderCurrentStep(); };
+        return card;
+      };
+
+      const _createColorSwatch = (colorObj, activeId, onClick) => {
+        const btn = UTILS.createElement('button', `swatch ${colorObj.id === activeId ? 'active' : ''}`);
+        btn.style.setProperty('--swatch-hex', colorObj.hex);
+        btn.style.setProperty('--swatch-alt', colorObj.hex); // Paleta simple en V3
+        btn.style.setProperty('--swatch-rgb', COLORIZER.hexToRgbStr(colorObj.hex));
+        btn.style.setProperty('--swatch-check', COLORIZER.contrastColor(colorObj.hex));
+
+        const circle = UTILS.createElement('span', 'swatch__circle');
+        const label = UTILS.createElement('span', 'swatch__label', colorObj.name);
+        btn.appendChild(circle); btn.appendChild(label);
+        btn.onclick = () => { onClick(colorObj); };
+        return btn;
+      };
+
+      /* RENDERIZADOR DE PASOS */
+      const _renderCurrentStep = () => {
+        const container = document.getElementById('step-content');
+        const titleEl = document.getElementById('step-title');
+        const descEl = document.getElementById('step-desc');
+        document.getElementById('step-indicator').textContent = `Paso ${_step} de 6`;
+
+        container.innerHTML = '';
+        document.getElementById('btn-prev-step').style.visibility = _step === 1 ? 'hidden' : 'visible';
+        document.getElementById('btn-next-step').textContent = _step === 6 ? 'Finalizar Diseño' : 'Siguiente';
+
+        if (_step === 1) {
+          titleEl.textContent = 'Diseño Base'; descEl.textContent = 'Selecciona el corte y estilo principal de la polo.';
+          const grid = UTILS.createElement('div', 'options-grid');
+          STORE.getPolos().forEach(p => {
+            const card = UTILS.createElement('div', `option-card ${state.design?.id === p.id ? 'active' : ''}`);
+            const title = UTILS.createElement('div', 'option-card__title', p.name);
+            card.appendChild(UTILS.createElement('div', '', '👕')); // Placeholder visual rápido
+            card.appendChild(title);
+            card.onclick = () => { state.design = p; _updateCanvas(); _renderCurrentStep(); };
+            grid.appendChild(card);
           });
-          return matchName || matchColor;
-        });
-
-        if (!filteredPolos.length) {
-          const emptySearch = UTILS.createElement('div', 'catalog-empty');
-          emptySearch.appendChild(UTILS.createElement('p', '', 'No se encontraron modelos con esa búsqueda.'));
-          grid.appendChild(emptySearch);
-          return;
+          container.appendChild(grid);
         }
-
-        for (const polo of filteredPolos) {
-          const card = UTILS.createElement('div', 'polo-card');
-          card.setAttribute('role', 'button');
-          card.setAttribute('tabindex', '0');
-          card.addEventListener('click', () => VIEWER.open(polo));
-          card.addEventListener('keyup', (e) => { if (e.key === 'Enter') VIEWER.open(polo); });
-
-          const thumbWrap = UTILS.createElement('div', 'polo-card__thumb');
-          const thumb = UTILS.createElement('canvas');
-          thumb.width = 200; thumb.height = 240;
-          thumbWrap.appendChild(thumb);
-          card.appendChild(thumbWrap);
-
-          const info = UTILS.createElement('div', 'polo-card__info');
-          info.appendChild(UTILS.createElement('div', 'polo-card__name', polo.name));
-
-          const dotsWrap = UTILS.createElement('div', 'polo-card__colors');
-          (polo.colorIds || []).forEach(cid => {
-            const c = colorMap[cid];
-            if (!c) return;
-            const dot = UTILS.createElement('span', 'polo-card__dot');
-            dot.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
-            dot.title = c.name;
-            dotsWrap.appendChild(dot);
-          });
-          info.appendChild(dotsWrap);
-
-          const ctaEl = UTILS.createElement('div', 'polo-card__cta', 'Ver colores');
-          info.appendChild(ctaEl);
-          card.appendChild(info);
-          grid.appendChild(card);
-
-          const firstColorId = (polo.colorIds || [])[0];
-          const firstColor = firstColorId ? colorMap[firstColorId] : null;
-          if (polo.imageUrl && firstColor) {
-            COLORIZER.colorizeThumbnail(thumb, polo.imageUrl, firstColor.hex, polo.overlayUrl, firstColor.hexAlt || firstColor.hex)
-              .catch(() => {
-                thumbWrap.innerHTML = '';
-                thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
-              });
-          } else if (!polo.imageUrl) {
-            thumbWrap.innerHTML = '';
-            thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
+        else if (_step === 2) {
+          titleEl.textContent = 'Tipo de Perilla'; descEl.textContent = '¿Prefieres botones clásicos o una cremallera moderna?';
+          const grid = UTILS.createElement('div', 'options-grid');
+          optionsConfig.plackets.forEach(opt => grid.appendChild(_createCard(opt, state.placket, id => state.placket = id)));
+          container.appendChild(grid);
+        }
+        else if (_step === 3) {
+          titleEl.textContent = 'Color del Cuerpo'; descEl.textContent = 'Selecciona el color principal de la prenda.';
+          const grid = UTILS.createElement('div', 'options-grid colors');
+          STORE.getColors().forEach(c => grid.appendChild(_createColorSwatch(c, state.baseColor?.id, color => { state.baseColor = color; _updateCanvas(); _renderCurrentStep(); })));
+          container.appendChild(grid);
+        }
+        else if (_step === 4) {
+          titleEl.textContent = 'Diseño de Cuello'; descEl.textContent = 'Elige la forma del cuello y puños.';
+          const grid = UTILS.createElement('div', 'options-grid');
+          optionsConfig.collars.forEach(opt => grid.appendChild(_createCard(opt, state.collarDesign, id => state.collarDesign = id)));
+          container.appendChild(grid);
+        }
+        else if (_step === 5) {
+          titleEl.textContent = 'Color de Detalles'; descEl.textContent = 'Elige el color para el cuello y los puños (si aplica a tu diseño).';
+          if (!state.design?.overlayUrl) {
+            const note = UTILS.createElement('div', 'empty-state');
+            note.innerHTML = `<span>ℹ️</span><p>El diseño base seleccionado no soporta colores separados para el cuello en la previsualización, pero puedes seleccionar el color para la confección.</p>`;
+            container.appendChild(note);
           }
+          const grid = UTILS.createElement('div', 'options-grid colors');
+          STORE.getColors().forEach(c => grid.appendChild(_createColorSwatch(c, state.detailColor?.id, color => { state.detailColor = color; _updateCanvas(); _renderCurrentStep(); })));
+          container.appendChild(grid);
+        }
+        else if (_step === 6) {
+          titleEl.textContent = 'Posición del Logotipo'; descEl.textContent = '¿Dónde deseas bordar/estampar tu logo?';
+          const grid = UTILS.createElement('div', 'options-grid');
+          optionsConfig.logos.forEach(opt => grid.appendChild(_createCard(opt, state.logoPos, id => state.logoPos = id)));
+          container.appendChild(grid);
+        }
+
+        _validateStep();
+      };
+
+      const _validateStep = () => {
+        const btn = document.getElementById('btn-next-step');
+        if (_isProcessing) { btn.disabled = true; return; }
+
+        let isValid = false;
+        if (_step === 1 && state.design) isValid = true;
+        if (_step === 2 && state.placket) isValid = true;
+        if (_step === 3 && state.baseColor) isValid = true;
+        if (_step === 4 && state.collarDesign) isValid = true;
+        if (_step === 5 && state.detailColor) isValid = true;
+        if (_step === 6 && state.logoPos) isValid = true;
+
+        btn.disabled = !isValid;
+      };
+
+      const nextStep = () => {
+        if (_step < 6) { _step++; _renderCurrentStep(); }
+        else {
+          // Finalizar
+          console.log("Pedido Finalizado:", state);
+          UI.toast('¡Diseño completado! Preparando orden...', 'success');
+          setTimeout(() => UI.showPage('page-home'), 2000);
         }
       };
 
-      return { render };
+      const prevStep = () => {
+        if (_step > 1) { _step--; _renderCurrentStep(); }
+      };
+
+      return { start, nextStep, prevStep };
     })();
 
     /* ═══════════════════════════════════════════════════
-       VIEWER
+       AUTH LOGIC
     ═══════════════════════════════════════════════════ */
-    const VIEWER = (() => {
-      let _currentPolo = null;
-      let _colorizing = false;
+    const AUTH = (() => {
+      const verify = async (pin) => {
+        const lo = STORE.getLockout();
+        if (lo.until && Date.now() < lo.until) return { status: 'locked', seconds: Math.ceil((lo.until - Date.now()) / 1000) };
+        if (lo.until && Date.now() >= lo.until) STORE.clearLockout();
 
-      const open = (polo) => {
-        _currentPolo = polo;
-        document.getElementById('viewer-polo-name').textContent = polo.name;
+        if (await CRYPTO.hash(pin) === STORE.getPinHash()) { STORE.clearLockout(); STORE.setSession(); return { status: 'ok' }; }
 
-        document.getElementById('viewer-canvas').style.opacity = '0';
-        document.getElementById('viewer-glow').style.background = 'transparent';
-
-        _renderSwatches();
-        UI.showPage('page-viewer');
-        const colors = STORE.getColors();
-        const available = colors.filter(c => (polo.colorIds || []).includes(c.id));
-        if (available.length) _applyColor(available[0]);
+        const att = (lo.attempts || 0) + 1;
+        if (att >= CFG.MAX_ATTEMPTS) { STORE.setLockout({ attempts: att, until: Date.now() + CFG.LOCKOUT_TTL }); return { status: 'locked', seconds: CFG.LOCKOUT_TTL / 1000 }; }
+        STORE.setLockout({ attempts: att, until: 0 });
+        return { status: 'fail', remaining: CFG.MAX_ATTEMPTS - att };
       };
-
-      const _renderSwatches = () => {
-        const wrap = document.getElementById('viewer-swatches');
-        const colors = STORE.getColors();
-        const available = colors.filter(c => (_currentPolo.colorIds || []).includes(c.id));
-        wrap.innerHTML = '';
-
-        available.forEach((c, i) => {
-          const btn = document.createElement('button');
-          btn.className = 'swatch';
-          btn.style.setProperty('--swatch-hex', c.hex);
-          btn.style.setProperty('--swatch-alt', c.hexAlt || c.hex);
-          btn.style.setProperty('--swatch-rgb', COLORIZER.hexToRgbStr(c.hex));
-          btn.style.setProperty('--swatch-check', COLORIZER.contrastColor(c.hex));
-          btn.style.animationDelay = (i * 35) + 'ms';
-          btn.setAttribute('aria-label', c.name);
-          btn.setAttribute('title', c.name);
-          btn.dataset.id = c.id;
-
-          const circle = document.createElement('span');
-          circle.className = 'swatch__circle';
-          const label = document.createElement('span');
-          label.className = 'swatch__label';
-          label.textContent = c.name;
-          btn.appendChild(circle);
-          btn.appendChild(label);
-
-          btn.addEventListener('click', () => _applyColor(c));
-          wrap.appendChild(btn);
-        });
-      };
-
-      const _setProcessingState = (isProcessing) => {
-        _colorizing = isProcessing;
-        const loader = document.getElementById('viewer-loader');
-        const canvas = document.getElementById('viewer-canvas');
-        const swatches = document.querySelectorAll('#viewer-swatches .swatch');
-
-        if (isProcessing) {
-          loader.classList.add('active');
-          canvas.style.opacity = '0.5';
-          swatches.forEach(btn => btn.disabled = true);
-        } else {
-          loader.classList.remove('active');
-          canvas.style.opacity = '1';
-          swatches.forEach(btn => btn.disabled = false);
-        }
-      };
-
-      const _applyColor = async (colorDef) => {
-        if (_colorizing) return;
-        _setProcessingState(true);
-
-        document.getElementById('viewer-badge-dot').style.background = `linear-gradient(135deg, ${colorDef.hex} 50%, ${colorDef.hexAlt || colorDef.hex} 50%)`;
-        document.getElementById('viewer-badge-name').textContent = colorDef.name;
-        document.getElementById('viewer-glow').style.background = `rgba(${COLORIZER.hexToRgbStr(colorDef.hex)}, 0.18)`;
-
-        document.querySelectorAll('#viewer-swatches .swatch').forEach(s => s.classList.remove('active'));
-        const target = document.querySelector(`.swatch[data-id="${colorDef.id}"]`);
-        if (target) target.classList.add('active');
-
-        const canvas = document.getElementById('viewer-canvas');
-        if (_currentPolo.imageUrl) {
-          await COLORIZER.colorize(canvas, _currentPolo.imageUrl, colorDef.hex, _currentPolo.overlayUrl, colorDef.hexAlt || colorDef.hex);
-        }
-
-        _setProcessingState(false);
-      };
-
-      return { open };
+      return { verify, isAuth: STORE.isSessionOk, logout: STORE.clearSession, lockoutSecondsLeft: () => { const lo = STORE.getLockout(); return lo.until ? Math.max(0, Math.ceil((lo.until - Date.now()) / 1000)) : 0; } };
     })();
 
     /* ═══════════════════════════════════════════════════
        PIN VIEW
     ═══════════════════════════════════════════════════ */
     const PIN_VIEW = (() => {
-      let _buffer = '';
-
-      const render = () => {
-        _buffer = '';
-        _renderDots();
-        _renderKeypad();
-        document.getElementById('pin-error').textContent = '';
-        const secs = AUTH.lockoutSecondsLeft();
-        if (secs > 0) _startLockoutCountdown(secs);
-      };
-
-      const _renderDots = () => {
-        const wrap = document.getElementById('pin-dots');
-        wrap.innerHTML = '';
-        const len = STORE.getPinLen();
-        for (let i = 0; i < len; i++) {
-          const d = document.createElement('div');
-          d.className = 'pin-dot' + (i < _buffer.length ? ' filled' : '');
-          wrap.appendChild(d);
-        }
-      };
-
+      let _buf = '';
+      const render = () => { _buf = ''; _renderDots(); _renderKeypad(); document.getElementById('pin-error').textContent = ''; const s = AUTH.lockoutSecondsLeft(); if (s > 0) _lock(s); };
+      const _renderDots = () => { const w = document.getElementById('pin-dots'); w.innerHTML = ''; for (let i = 0; i < STORE.getPinLen(); i++) w.appendChild(UTILS.createElement('div', `pin-dot ${i < _buf.length ? 'filled' : ''}`)); };
       const _renderKeypad = () => {
-        const wrap = document.getElementById('pin-keypad');
-        wrap.innerHTML = '';
+        const w = document.getElementById('pin-keypad'); w.innerHTML = '';
         [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].forEach(k => {
-          const btn = document.createElement('button');
-          btn.className = 'pin-key' + (k === '⌫' ? ' del' : '');
-          btn.textContent = k === '' ? '' : k;
-          if (k === '') { btn.disabled = true; btn.style.visibility = 'hidden'; }
-          else if (k === '⌫') btn.addEventListener('click', _backspace);
-          else btn.addEventListener('click', () => _press(String(k)));
-          wrap.appendChild(btn);
+          const b = UTILS.createElement('button', `pin-key ${k === '⌫' ? 'del' : ''}`, k);
+          if (k === '') b.style.visibility = 'hidden'; else if (k === '⌫') b.onclick = () => { _buf = _buf.slice(0, -1); _renderDots(); };
+          else b.onclick = () => { if (_buf.length >= STORE.getPinLen()) return; _buf += k; _renderDots(); if (_buf.length === STORE.getPinLen()) _submit(); };
+          w.appendChild(b);
         });
       };
-
-      const _press = (digit) => {
-        const maxLen = STORE.getPinLen();
-        if (_buffer.length >= maxLen) return;
-        _buffer += digit;
-        _renderDots();
-        if (_buffer.length === maxLen) _submit();
-      };
-
-      let _pressTimer = null;
-      const _backspace = () => {
-        clearTimeout(_pressTimer);
-        _buffer = _buffer.slice(0, -1);
-        _renderDots();
-      };
-
-      const _startLockoutCountdown = (seconds) => {
-        let s = seconds;
-        const errEl = document.getElementById('pin-error');
-        const tick = () => {
-          errEl.textContent = `Bloqueado. Espera ${s} segundo${s !== 1 ? 's' : ''}.`;
-          if (s <= 0) { errEl.textContent = ''; return; }
-          s--;
-          setTimeout(tick, 1000);
-        };
-        tick();
+      const _lock = (s) => {
+        const err = document.getElementById('pin-error');
+        const t = () => { err.textContent = `Bloqueado. Espera ${s}s.`; if (s <= 0) { err.textContent = ''; return; } s--; setTimeout(t, 1000); }; t();
         document.querySelectorAll('.pin-key').forEach(b => b.disabled = true);
-        setTimeout(() => {
-          document.querySelectorAll('.pin-key').forEach(b => b.disabled = false);
-          _buffer = '';
-          _renderDots();
-        }, seconds * 1000);
+        setTimeout(() => { document.querySelectorAll('.pin-key').forEach(b => b.disabled = false); _buf = ''; _renderDots(); }, s * 1000);
       };
-
       const _submit = async () => {
-        clearTimeout(_pressTimer);
-        const result = await AUTH.verify(_buffer);
-        if (result.status === 'ok') {
-          ADMIN.open();
-        } else if (result.status === 'locked') {
-          _buffer = '';
-          _renderDots();
-          _startLockoutCountdown(result.seconds || 60);
-        } else {
-          const rem = result.remaining;
-          _showError(`PIN incorrecto.${rem !== undefined ? ' Intentos restantes: ' + rem : ''}`);
-          document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error'));
-          setTimeout(() => {
-            _buffer = '';
-            _renderDots();
-            document.getElementById('pin-error').textContent = '';
-          }, 700);
-        }
+        const r = await AUTH.verify(_buf);
+        if (r.status === 'ok') ADMIN.open();
+        else if (r.status === 'locked') { _buf = ''; _renderDots(); _lock(r.seconds || 60); }
+        else { document.getElementById('pin-error').textContent = `PIN incorrecto. Quedan ${r.remaining}`; document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error')); setTimeout(() => { _buf = ''; _renderDots(); document.getElementById('pin-error').textContent = ''; }, 700); }
       };
-
-      const _showError = (msg) => { document.getElementById('pin-error').textContent = msg; };
-
       return { render };
     })();
 
     /* ═══════════════════════════════════════════════════
-       ADMIN — Panel de Control
+       ADMIN
     ═══════════════════════════════════════════════════ */
     const ADMIN = (() => {
-
-      const open = () => {
-        UI.showPage('page-admin');
-        switchSection('polos');
+      const open = () => { UI.showPage('page-admin'); switchSection('polos'); };
+      const switchSection = (n) => {
+        document.querySelectorAll('.admin-section, .admin-nav-item').forEach(e => e.classList.remove('active'));
+        document.getElementById(`section-${n}`)?.classList.add('active');
+        document.querySelector(`.admin-nav-item[data-section="${n}"]`)?.classList.add('active');
+        if (n === 'polos') _renderPolos(); if (n === 'colors') _renderColors();
       };
 
-      const switchSection = (name) => {
-        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
-        const sec = document.getElementById('section-' + name);
-        if (sec) sec.classList.add('active');
-        const btn = document.querySelector(`.admin-nav-item[data-section="${name}"]`);
-        if (btn) btn.classList.add('active');
-
-        refreshSection(name);
-      };
-
-      const refreshSection = (name) => {
-        if (name === 'polos') { _renderPoloList(); _renderColorCheckboxes(); }
-        if (name === 'colors') _renderColorList();
-      };
-
-      /* ── COLORES ── */
       const addColor = async () => {
-        const name = document.getElementById('color-name').value.trim();
-        const hex = document.getElementById('color-hex').value;
-        const hexAlt = document.getElementById('color-hex-alt').value;
-
-        if (!name) return UI.toast('El nombre del color es obligatorio.', 'error');
+        const name = document.getElementById('color-name').value.trim(), hex = document.getElementById('color-hex').value;
+        if (!name) return UI.toast('Nombre obligatorio', 'error');
         const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-        if (STORE.getColors().find(c => c.id === id)) return UI.toast('Ya existe un color con ese nombre.', 'error');
-
-        await STORE.addColor({ id, name, hex, hexAlt });
-        document.getElementById('color-name').value = '';
-        UI.toast(`Color "${name}" guardado en la nube.`, 'success');
+        await STORE.addColor({ id, name, hex, hexAlt: hex }); // Guardamos hexAlt igual para retrocompatibilidad
+        document.getElementById('color-name').value = ''; UI.toast('Color guardado', 'success');
       };
 
-      const _renderColorList = () => {
-        const list = document.getElementById('color-list');
-        list.innerHTML = '';
-        const colors = STORE.getColors();
-        if (!colors.length) {
-          list.appendChild(UTILS.createElement('p', '', 'No hay colores aún.'));
-          return;
-        }
-
-        colors.forEach(c => {
-          const item = UTILS.createElement('div', 'admin-item');
-
-          const infoDiv = UTILS.createElement('div', 'admin-item__info');
-          infoDiv.style.cssText = 'flex-direction:row;align-items:center;gap:12px';
-
-          const swatch = UTILS.createElement('div', 'admin-item__swatch');
-          swatch.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
-          infoDiv.appendChild(swatch);
-
-          const textWrap = document.createElement('div');
-          textWrap.appendChild(UTILS.createElement('div', 'admin-item__name', c.name));
-          textWrap.appendChild(UTILS.createElement('div', 'admin-item__meta', `${c.hex}${c.hexAlt && c.hex !== c.hexAlt ? ' / ' + c.hexAlt : ''}`));
-          infoDiv.appendChild(textWrap);
-
-          const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
-          const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
-          btnDel.addEventListener('click', () => _delColor(c.id, c.name));
-          actionsDiv.appendChild(btnDel);
-
-          item.appendChild(infoDiv);
-          item.appendChild(actionsDiv);
-          list.appendChild(item);
-        });
-      };
-
-      const _delColor = async (id, name) => {
-        if (!UI.confirm(`¿Eliminar el color "${name}" de la nube? Los modelos que lo usen lo perderán.`)) return;
-        await STORE.delColor(id);
-
-        // Actualizar los modelos que contenían ese color
-        const updatedPolos = STORE.getPolos().map(p => {
-          if ((p.colorIds || []).includes(id)) {
-            return { ...p, colorIds: p.colorIds.filter(c => c !== id) };
-          }
-          return null;
-        }).filter(p => p !== null);
-
-        if (updatedPolos.length > 0) {
-          await STORE.updatePolosBatch(updatedPolos);
-        }
-
-        UI.toast('Color eliminado de la nube.', 'success');
-      };
-
-      /* ── POLOS ── */
-      const _renderColorCheckboxes = () => {
-        const wrap = document.getElementById('polo-color-checkboxes');
-        wrap.innerHTML = '';
+      const _renderColors = () => {
+        const l = document.getElementById('color-list'); l.innerHTML = '';
         STORE.getColors().forEach(c => {
-          const label = document.createElement('label');
-          label.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer';
-
-          const cb = document.createElement('input');
-          cb.type = 'checkbox'; cb.value = c.id; cb.id = 'pcb-' + c.id;
-
-          const dot = document.createElement('span');
-          dot.style.cssText = `width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%);border:1.5px solid rgba(255,255,255,.12);flex-shrink:0`;
-
-          label.appendChild(cb);
-          label.appendChild(dot);
-          label.appendChild(document.createTextNode(c.name));
-          wrap.appendChild(label);
+          const i = UTILS.createElement('div', 'admin-item');
+          i.innerHTML = `<div class="admin-item__info" style="flex-direction:row;align-items:center;gap:12px"><div class="admin-item__swatch" style="background:${c.hex}"></div><div><div class="admin-item__name">${c.name}</div><div class="admin-item__meta">${c.hex}</div></div></div>`;
+          const btn = UTILS.createElement('button', 'btn-danger', 'Eliminar'); btn.onclick = () => { if (UI.confirm('¿Borrar?')) STORE.delColor(c.id); };
+          const act = UTILS.createElement('div', 'admin-item__actions'); act.appendChild(btn); i.appendChild(act); l.appendChild(i);
         });
-      };
-
-      const previewImage = () => {
-        const url = document.getElementById('polo-url').value.trim();
-        const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
-        const wrap = document.getElementById('polo-preview-wrap');
-        wrap.innerHTML = '';
-
-        if (!url) { wrap.appendChild(UTILS.createElement('span', 'placeholder', 'La imagen aparecerá aquí')); return; }
-
-        wrap.appendChild(UTILS.createElement('span', 'placeholder', 'Cargando y procesando imagen...'));
-
-        const canvas = document.createElement('canvas');
-        COLORIZER.colorizeThumbnail(canvas, url, '#E0D8CC', overlayUrl, '#1B2E4B')
-          .then(() => { wrap.innerHTML = ''; wrap.appendChild(canvas); })
-          .catch((err) => {
-            wrap.innerHTML = '';
-            const errSpan = UTILS.createElement('span', 'placeholder', '❌ Error al cargar. Revisa que el enlace sea correcto y público.');
-            errSpan.style.color = 'var(--danger)';
-            wrap.appendChild(errSpan);
-          });
       };
 
       const addPolo = async () => {
-        const name = document.getElementById('polo-name').value.trim();
-        const url = document.getElementById('polo-url').value.trim();
-        const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
-
-        if (!name) return UI.toast('El nombre del modelo es obligatorio.', 'error');
-        if (!url) return UI.toast('La URL de la imagen principal es obligatoria.', 'error');
-
-        const colorIds = [...document.querySelectorAll('#polo-color-checkboxes input:checked')].map(i => i.value);
-        if (!colorIds.length) return UI.toast('Selecciona al menos un color.', 'error');
-
-        const id = Date.now().toString(36);
-        await STORE.addPolo({ id, name, imageUrl: url, overlayUrl: overlayUrl || null, colorIds });
-
-        document.getElementById('polo-name').value = '';
-        document.getElementById('polo-url').value = '';
-        document.getElementById('polo-overlay-url').value = '';
-        document.getElementById('polo-preview-wrap').innerHTML = '<span class="placeholder">La imagen aparecerá aquí</span>';
-        document.querySelectorAll('#polo-color-checkboxes input').forEach(i => i.checked = false);
-
-        UI.toast(`Polo "${name}" subida a la nube.`, 'success');
+        const name = document.getElementById('polo-name').value.trim(), url = document.getElementById('polo-url').value.trim(), ov = document.getElementById('polo-overlay-url').value.trim();
+        if (!name || !url) return UI.toast('Nombre y URL base obligatorios', 'error');
+        await STORE.addPolo({ id: Date.now().toString(36), name, imageUrl: url, overlayUrl: ov || null, colorIds: STORE.getColors().map(c => c.id) }); // Asigna todos los colores por defecto
+        document.getElementById('polo-name').value = ''; document.getElementById('polo-url').value = ''; document.getElementById('polo-overlay-url').value = '';
+        UI.toast('Diseño guardado', 'success');
       };
 
-      const _renderPoloList = () => {
-        const list = document.getElementById('polo-list');
-        list.innerHTML = '';
-        const polos = STORE.getPolos();
-        const colorMap = Object.fromEntries(STORE.getColors().map(c => [c.id, c]));
-
-        if (!polos.length) {
-          list.appendChild(UTILS.createElement('p', '', 'No hay modelos aún. Agrega tu primera polo.'));
-          return;
-        }
-
-        polos.forEach(p => {
-          const item = UTILS.createElement('div', 'admin-item');
-          const infoDiv = UTILS.createElement('div', 'admin-item__info');
-
-          infoDiv.appendChild(UTILS.createElement('div', 'admin-item__name', p.name));
-
-          const metaBase = UTILS.createElement('div', 'admin-item__meta', `Base: ${p.imageUrl}`);
-          metaBase.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
-          metaBase.title = p.imageUrl;
-          infoDiv.appendChild(metaBase);
-
-          if (p.overlayUrl) {
-            const metaDet = UTILS.createElement('div', 'admin-item__meta', `Detalles: ${p.overlayUrl}`);
-            metaDet.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--accent);';
-            infoDiv.appendChild(metaDet);
-          }
-
-          const chipsDiv = UTILS.createElement('div', 'color-chips');
-          (p.colorIds || []).forEach(cid => {
-            const c = colorMap[cid];
-            if (c) {
-              const chip = UTILS.createElement('span', 'color-chip');
-              chip.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
-              chip.title = c.name;
-              chipsDiv.appendChild(chip);
-            }
-          });
-          infoDiv.appendChild(chipsDiv);
-
-          const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
-          const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
-          btnDel.addEventListener('click', () => _delPolo(p.id, p.name));
-          actionsDiv.appendChild(btnDel);
-
-          item.appendChild(infoDiv);
-          item.appendChild(actionsDiv);
-          list.appendChild(item);
+      const _renderPolos = () => {
+        const l = document.getElementById('polo-list'); l.innerHTML = '';
+        STORE.getPolos().forEach(p => {
+          const i = UTILS.createElement('div', 'admin-item');
+          i.innerHTML = `<div class="admin-item__info"><div class="admin-item__name">${p.name}</div><div class="admin-item__meta">Base: ${p.imageUrl}</div>${p.overlayUrl ? `<div class="admin-item__meta" style="color:var(--accent)">Detalles: ${p.overlayUrl}</div>` : ''}</div>`;
+          const btn = UTILS.createElement('button', 'btn-danger', 'Eliminar'); btn.onclick = () => { if (UI.confirm('¿Borrar?')) STORE.delPolo(p.id); };
+          const act = UTILS.createElement('div', 'admin-item__actions'); act.appendChild(btn); i.appendChild(act); l.appendChild(i);
         });
       };
 
-      const _delPolo = async (id, name) => {
-        if (!UI.confirm(`¿Eliminar el modelo "${name}" de la nube?`)) return;
-        await STORE.delPolo(id);
-        UI.toast('Modelo eliminado.', 'success');
-      };
-
-      /* ── AJUSTES & BACKUP ── */
-      const changePin = async () => {
-        const current = document.getElementById('pin-current').value;
-        const next = document.getElementById('pin-new').value;
-        if (!/^\d{4,6}$/.test(next)) return UI.toast('El PIN debe ser de 4 a 6 dígitos numéricos.', 'error');
-        if (!await AUTH.changePin(current, next)) return UI.toast('PIN actual incorrecto.', 'error');
-
-        document.getElementById('pin-current').value = '';
-        document.getElementById('pin-new').value = '';
-        UI.toast('PIN actualizado correctamente en la nube.', 'success');
-      };
-
-      const clearPolos = async () => {
-        if (!UI.confirm('¿Eliminar TODOS los modelos de la nube? Esta acción no se puede deshacer.')) return;
-        const polos = STORE.getPolos();
-        for (const p of polos) await STORE.delPolo(p.id);
-        UI.toast('Todos los modelos eliminados de la nube.', 'success');
-      };
-
-      const clearColors = async () => {
-        if (!UI.confirm('¿Eliminar TODOS los colores de la nube? Los modelos perderán sus colores.')) return;
-        const colors = STORE.getColors();
-        for (const c of colors) await STORE.delColor(c.id);
-        UI.toast('Todos los colores eliminados de la nube.', 'success');
-      };
-
-      const exportData = () => {
-        try {
-          const data = STORE.exportDataObj();
-          const dateStr = new Date().toISOString().split('T')[0];
-          UTILS.downloadJSON(data, `polo-studio-backup-${dateStr}.json`);
-          UI.toast('Backup descargado correctamente.', 'success');
-        } catch (e) {
-          UI.toast('Error al exportar datos.', 'error');
-        }
-      };
-
-      const importData = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          try {
-            const obj = JSON.parse(e.target.result);
-            if (UI.confirm('¿Estás seguro? Esto reemplazará todos los modelos en la nube.')) {
-              await STORE.importDataObj(obj);
-              switchSection('polos');
-              UI.toast('Datos de la nube restaurados correctamente.', 'success');
-            }
-          } catch (err) {
-            console.error(err);
-            UI.toast('El archivo no es válido o está corrupto.', 'error');
-          }
-          event.target.value = '';
-        };
-        reader.readAsText(file);
-      };
-
-      return { open, switchSection, refreshSection, addColor, addPolo, previewImage, changePin, clearPolos, clearColors, exportData, importData };
+      return { open, switchSection, addColor, addPolo, clearPolos: async () => { if (UI.confirm('¿Borrar todo?')) for (let p of STORE.getPolos()) await STORE.delPolo(p.id); }, clearColors: async () => { if (UI.confirm('¿Borrar todo?')) for (let c of STORE.getColors()) await STORE.delColor(c.id); } };
     })();
 
     /* ═══════════════════════════════════════════════════
-       MECANISMO DE BOTÓN ADMIN SECRETO
-    ═══════════════════════════════════════════════════ */
-    const SECRET_ADMIN = (() => {
-      const init = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('admin') === '123') {
-          localStorage.setItem('ps_is_admin_device', 'true');
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-        if (localStorage.getItem('ps_is_admin_device') === 'true') {
-          const btn = document.getElementById('btn-admin');
-          if (btn) btn.style.display = 'block';
-        }
-      };
-      return { init };
-    })();
-
-    /* ═══════════════════════════════════════════════════
-       APP — Inicializador y Sincronización en Tiempo Real
+       APP GLOBAL
     ═══════════════════════════════════════════════════ */
     window.APP = {
-      showCatalog: () => {
-        CATALOG.render();
-        UI.showPage('page-catalog');
-      },
-      showPin: () => {
-        if (AUTH.isAuth()) { ADMIN.open(); return; }
-        PIN_VIEW.render();
-        UI.showPage('page-pin');
-      },
-      logout: () => {
-        AUTH.logout();
-        UI.showPage('page-catalog');
-        UI.toast('Sesión cerrada.');
-      },
+      showHome: () => UI.showPage('page-home'),
+      startBuilder: () => BUILDER.start(),
+      showPin: () => AUTH.isAuth() ? ADMIN.open() : (PIN_VIEW.render(), UI.showPage('page-pin')),
+      logout: () => { AUTH.logout(); UI.showPage('page-home'); UI.toast('Sesión cerrada'); }
     };
-
     window.ADMIN = ADMIN;
+    window.BUILDER = BUILDER;
 
-    // ARRANCAR APLICACIÓN E INICIAR SINCRONIZACIÓN FIREBASE
+    // BOTÓN SECRETO ADMIN
+    if (new URLSearchParams(window.location.search).get('admin') === '123') { localStorage.setItem('ps_admin', '1'); window.history.replaceState({}, '', window.location.pathname); }
+    if (localStorage.getItem('ps_admin') === '1') document.getElementById('btn-admin').style.display = 'block';
+
+    // INIT
     async function main() {
-      SECRET_ADMIN.init();
-
       try {
         await initAuth();
+        onSnapshot(colorsRef, s => { STORE.state.colors = s.docs.map(d => d.data()); });
+        onSnapshot(polosRef, s => { STORE.state.polos = s.docs.map(d => d.data()); });
+        onSnapshot(settingsRef, s => { if (s.exists()) { STORE.state.pinHash = s.data().pinHash; STORE.state.pinLen = s.data().pinLen; } });
 
-        // Listeners en tiempo real para mantener todo sincronizado
-        onSnapshot(colorsRef, (snapshot) => {
-          STORE.state.colors = snapshot.docs.map(d => d.data());
-          UI.refreshActiveScreen();
-        }, (err) => console.error(err));
-
-        onSnapshot(polosRef, (snapshot) => {
-          STORE.state.polos = snapshot.docs.map(d => d.data());
-          UI.refreshActiveScreen();
-        }, (err) => console.error(err));
-
-        onSnapshot(settingsRef, (snapshot) => {
-          if (snapshot.exists()) {
-            STORE.state.pinHash = snapshot.data().pinHash;
-            STORE.state.pinLen = snapshot.data().pinLen;
-          }
-        }, (err) => console.error(err));
-
-        // Esperar la primera carga para quitar el spinner
         setTimeout(() => {
           document.getElementById('global-loader').classList.add('hide');
-          STORE.ensureDefaultPin(); // Solo crea un pin si la nube está virgen
-          APP.showCatalog();
-        }, 1200);
-
-      } catch (error) {
-        console.error("Firebase Auth Error:", error);
-
-        let errorMsg = 'Error conectando al servidor.';
-        let uiMsg = 'Error de Conexión';
-
-        // Manejo de errores profesional (Senior Dev)
-        if (error.code === 'auth/admin-restricted-operation') {
-          errorMsg = 'Operación bloqueada. ¿Abriste el archivo con doble clic (file://)? Usa un servidor local o súbelo a GitHub.';
-          uiMsg = 'Error de Entorno';
-        } else if (error.code === 'auth/unauthorized-domain') {
-          errorMsg = 'Este dominio no está autorizado. Ve a Firebase > Auth > Configuración > Dominios autorizados.';
-          uiMsg = 'Dominio no Autorizado';
-        } else if (error.code === 'auth/operation-not-allowed') {
-          errorMsg = 'El inicio de sesión anónimo está desactivado en Firebase Auth.';
-          uiMsg = 'Autenticación Inactiva';
-        }
-
-        UI.toast(errorMsg, 'error');
-        document.getElementById('global-loader').innerHTML = `
-          <div style="text-align:center; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
-            <span style="font-size: 2.5rem;">🛑</span>
-            <span style="color:var(--danger); font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em;">${uiMsg}</span>
-            <p style="color:var(--text-muted); font-size: 0.85rem; max-width: 320px; line-height: 1.5;">${errorMsg}</p>
-          </div>
-        `;
+          STORE.ensureDefaultPin();
+          APP.showHome();
+        }, 1500);
+      } catch (e) {
+        document.getElementById('global-loader').innerHTML = '<span style="color:var(--danger)">Error de Firebase Auth. Verifica tu configuración CORS/Dominios.</span>';
       }
     }
-
     main();
-
   </script>
 </body>
 
