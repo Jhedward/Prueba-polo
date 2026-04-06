@@ -873,7 +873,7 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════
-       PÁGINA: PIN & ADMIN (Mantenidas para la gestión)
+       PÁGINA: PIN & ADMIN
   ═══════════════════════════════════════════════════ -->
   <div class="page pin-page" id="page-pin">
     <div class="pin-card">
@@ -902,9 +902,13 @@
           Diseños Base</button>
         <button class="admin-nav-item" data-section="colors" onclick="window.ADMIN.switchSection('colors')">🎨 Paleta
           Global</button>
+        <!-- NUEVA PESTAÑA PARA OPCIONES DEL BUILDER -->
+        <button class="admin-nav-item" data-section="options" onclick="window.ADMIN.switchSection('options')">🧩
+          Opciones Builder</button>
         <button class="admin-nav-item" data-section="settings" onclick="window.ADMIN.switchSection('settings')">⚙️
           Ajustes</button>
       </nav>
+
       <div class="admin-content">
         <!-- POLOS -->
         <div class="admin-section active" id="section-polos">
@@ -925,6 +929,7 @@
           </div>
           <div class="admin-list" id="polo-list"></div>
         </div>
+
         <!-- COLORS -->
         <div class="admin-section" id="section-colors">
           <div class="admin-section-title">Paleta de Colores Global</div>
@@ -942,6 +947,47 @@
           </div>
           <div class="admin-list" id="color-list"></div>
         </div>
+
+        <!-- NUEVA SECCIÓN: OPCIONES DEL BUILDER -->
+        <div class="admin-section" id="section-options">
+          <div class="admin-section-title">Opciones del Configurador</div>
+          <div class="admin-section-sub">Personaliza las opciones que el cliente verá en cada paso del proceso de
+            diseño. Puedes usar Emojis como íconos.</div>
+
+          <div class="form-card">
+            <h3>Agregar Opción</h3>
+            <div class="form-row">
+              <div class="field">
+                <label>Categoría (Paso del Builder) *</label>
+                <select id="opt-category">
+                  <option value="plackets">Perillas (Paso 2)</option>
+                  <option value="collars">Cuellos y Puños (Paso 4)</option>
+                  <option value="logos">Posición de Logotipo (Paso 6)</option>
+                </select>
+              </div>
+              <div class="field"><label>Nombre de la Opción *</label><input type="text" id="opt-label"
+                  placeholder="Ej: Cuello en V" /></div>
+            </div>
+            <div class="field"><label>Ícono (Emoji o Texto corto) *</label><input type="text" id="opt-icon"
+                placeholder="Ej: 👕 o [V]" maxlength="10" /></div>
+
+            <button class="btn-primary" style="margin-top: 10px;" onclick="window.ADMIN.addConfigOption()">Guardar
+              Opción</button>
+          </div>
+
+          <!-- Listas dinámicas para cada categoría -->
+          <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px; color: var(--accent);">Tipos de Perilla</h4>
+            <div class="admin-list" id="list-plackets" style="margin-bottom: 24px;"></div>
+
+            <h4 style="margin-bottom: 10px; color: var(--accent);">Tipos de Cuello</h4>
+            <div class="admin-list" id="list-collars" style="margin-bottom: 24px;"></div>
+
+            <h4 style="margin-bottom: 10px; color: var(--accent);">Posiciones de Logotipo</h4>
+            <div class="admin-list" id="list-logos"></div>
+          </div>
+        </div>
+
         <!-- SETTINGS -->
         <div class="admin-section" id="section-settings">
           <div class="admin-section-title">Ajustes Generales</div>
@@ -1008,6 +1054,8 @@
 
     const polosRef = collection(db, 'artifacts', appId, 'public', 'data', 'polos');
     const colorsRef = collection(db, 'artifacts', appId, 'public', 'data', 'colors');
+    // NUEVA REFERENCIA: Colección para opciones del builder
+    const builderOptionsRef = collection(db, 'artifacts', appId, 'public', 'data', 'config_options');
     const settingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'auth');
 
     const initAuth = async () => {
@@ -1019,25 +1067,42 @@
     };
 
     /* ═══════════════════════════════════════════════════
-       STORE
+       STORE (Adaptado para opciones del configurador)
     ═══════════════════════════════════════════════════ */
     const STORE = (() => {
-      let state = { polos: [], colors: [], pinHash: null, pinLen: 4 };
+      let state = {
+        polos: [],
+        colors: [],
+        builderOptions: [], // Almacenará {id, category, label, icon}
+        pinHash: null,
+        pinLen: 4
+      };
+
       const _get = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
       const _set = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 
       const getPolos = () => state.polos;
       const getColors = () => state.colors;
+      const getBuilderOptions = (category = null) => {
+        if (!category) return state.builderOptions;
+        return state.builderOptions.filter(opt => opt.category === category);
+      };
 
       const addColor = async (c) => await setDoc(doc(colorsRef, c.id), c);
       const delColor = async (id) => await deleteDoc(doc(colorsRef, id));
       const addPolo = async (p) => await setDoc(doc(polosRef, p.id), p);
       const delPolo = async (id) => await deleteDoc(doc(polosRef, id));
+
+      // Funciones para manipular las opciones en Firebase
+      const addConfigOption = async (opt) => await setDoc(doc(builderOptionsRef, opt.id), opt);
+      const delConfigOption = async (id) => await deleteDoc(doc(builderOptionsRef, id));
+
       const setPinData = async (h, l) => await setDoc(settingsRef, { pinHash: h, pinLen: l });
       const ensureDefaultPin = async () => { if (!state.pinHash) await setPinData(await CRYPTO.hash(CFG.DEFAULT_PIN), CFG.DEFAULT_PIN.length); };
 
       return {
-        state, getPolos, getColors, addColor, delColor, addPolo, delPolo,
+        state, getPolos, getColors, getBuilderOptions,
+        addColor, delColor, addPolo, delPolo, addConfigOption, delConfigOption,
         getLockout: () => _get(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 }),
         setLockout: (o) => _set(CFG.LOCKOUT_KEY, o),
         clearLockout: () => _set(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 }),
@@ -1050,7 +1115,7 @@
     })();
 
     /* ═══════════════════════════════════════════════════
-       COLORIZER (Canvas Engine)
+       COLORIZER (Canvas Engine) - MANTENIDO IGUAL
     ═══════════════════════════════════════════════════ */
     const COLORIZER = (() => {
       const _imgCache = new Map();
@@ -1139,45 +1204,25 @@
     })();
 
     /* ═══════════════════════════════════════════════════
-       BUILDER CORE (Máquina de estados paso a paso)
+       BUILDER CORE (Lee de Firestore dinámicamente)
     ═══════════════════════════════════════════════════ */
     const BUILDER = (() => {
       let _step = 1;
       let _isProcessing = false;
 
-      // El estado central del diseño del cliente
       const state = {
-        design: null,     // Objeto polo de DB
-        placket: null,    // 'botones' | 'cremallera'
-        baseColor: null,  // Objeto color de DB
-        collarDesign: null, // 'clasico' | 'deportivo' | 'mandarin'
-        detailColor: null, // Objeto color de DB
-        logoPos: null     // 'izquierdo' | 'derecho' | 'espalda'
-      };
-
-      // Configuración dura de las opciones UI (Escalable)
-      const optionsConfig = {
-        plackets: [
-          { id: 'botones', label: 'Botones Clásicos', icon: '🔘' },
-          { id: 'cremallera', label: 'Cremallera / Cierre', icon: '🤐' }
-        ],
-        collars: [
-          { id: 'clasico', label: 'Cuello Clásico', icon: '👔' },
-          { id: 'deportivo', label: 'Cuello Deportivo (V)', icon: '🏃' },
-          { id: 'mandarin', label: 'Cuello Mandarín (Mao)', icon: '🥋' }
-        ],
-        logos: [
-          { id: 'izquierdo', label: 'Pecho Izquierdo', icon: '🛡️' },
-          { id: 'derecho', label: 'Pecho Derecho', icon: '🛡️' },
-          { id: 'espalda', label: 'Espalda Central', icon: '🔙' }
-        ]
+        design: null,
+        placket: null,
+        baseColor: null,
+        collarDesign: null,
+        detailColor: null,
+        logoPos: null
       };
 
       const start = () => {
         const polos = STORE.getPolos();
         if (!polos.length) return UI.toast('El catálogo está vacío, no se puede iniciar.', 'error');
 
-        // Reset state
         _step = 1;
         Object.keys(state).forEach(k => state[k] = null);
 
@@ -1197,22 +1242,19 @@
 
       const _updateCanvas = async () => {
         if (!state.design) {
-          const ctx = document.getElementById('builder-canvas').getContext('2d');
-          ctx.clearRect(0, 0, 400, 480);
+          document.getElementById('builder-canvas').getContext('2d').clearRect(0, 0, 400, 480);
           return;
         }
         _setProcessing(true);
-        // Si no hay color seleccionado aún, usa un gris neutro de previsualización
         const bHex = state.baseColor ? state.baseColor.hex : '#E0E0E0';
         const dHex = state.detailColor ? state.detailColor.hex : bHex;
 
         document.getElementById('builder-glow').style.background = `rgba(${COLORIZER.hexToRgbStr(bHex)}, 0.15)`;
         await COLORIZER.colorize(document.getElementById('builder-canvas'), state.design, bHex, dHex);
         _setProcessing(false);
-        _validateStep(); // Re-validar si se puede avanzar
+        _validateStep();
       };
 
-      /* Creadores de UI DRY */
       const _createCard = (data, activeId, onClick) => {
         const card = UTILS.createElement('div', `option-card ${data.id === activeId ? 'active' : ''}`);
         const icon = UTILS.createElement('div', '', data.icon);
@@ -1226,7 +1268,7 @@
       const _createColorSwatch = (colorObj, activeId, onClick) => {
         const btn = UTILS.createElement('button', `swatch ${colorObj.id === activeId ? 'active' : ''}`);
         btn.style.setProperty('--swatch-hex', colorObj.hex);
-        btn.style.setProperty('--swatch-alt', colorObj.hex); // Paleta simple en V3
+        btn.style.setProperty('--swatch-alt', colorObj.hex);
         btn.style.setProperty('--swatch-rgb', COLORIZER.hexToRgbStr(colorObj.hex));
         btn.style.setProperty('--swatch-check', COLORIZER.contrastColor(colorObj.hex));
 
@@ -1237,7 +1279,6 @@
         return btn;
       };
 
-      /* RENDERIZADOR DE PASOS */
       const _renderCurrentStep = () => {
         const container = document.getElementById('step-content');
         const titleEl = document.getElementById('step-title');
@@ -1253,9 +1294,8 @@
           const grid = UTILS.createElement('div', 'options-grid');
           STORE.getPolos().forEach(p => {
             const card = UTILS.createElement('div', `option-card ${state.design?.id === p.id ? 'active' : ''}`);
-            const title = UTILS.createElement('div', 'option-card__title', p.name);
-            card.appendChild(UTILS.createElement('div', '', '👕')); // Placeholder visual rápido
-            card.appendChild(title);
+            card.appendChild(UTILS.createElement('div', '', '👕'));
+            card.appendChild(UTILS.createElement('div', 'option-card__title', p.name));
             card.onclick = () => { state.design = p; _updateCanvas(); _renderCurrentStep(); };
             grid.appendChild(card);
           });
@@ -1264,7 +1304,9 @@
         else if (_step === 2) {
           titleEl.textContent = 'Tipo de Perilla'; descEl.textContent = '¿Prefieres botones clásicos o una cremallera moderna?';
           const grid = UTILS.createElement('div', 'options-grid');
-          optionsConfig.plackets.forEach(opt => grid.appendChild(_createCard(opt, state.placket, id => state.placket = id)));
+          const options = STORE.getBuilderOptions('plackets');
+          if (options.length === 0) container.appendChild(UTILS.createElement('div', 'empty-state', 'No hay opciones configuradas. Contacta al administrador.'));
+          options.forEach(opt => grid.appendChild(_createCard(opt, state.placket, id => state.placket = id)));
           container.appendChild(grid);
         }
         else if (_step === 3) {
@@ -1276,14 +1318,16 @@
         else if (_step === 4) {
           titleEl.textContent = 'Diseño de Cuello'; descEl.textContent = 'Elige la forma del cuello y puños.';
           const grid = UTILS.createElement('div', 'options-grid');
-          optionsConfig.collars.forEach(opt => grid.appendChild(_createCard(opt, state.collarDesign, id => state.collarDesign = id)));
+          const options = STORE.getBuilderOptions('collars');
+          if (options.length === 0) container.appendChild(UTILS.createElement('div', 'empty-state', 'No hay opciones configuradas.'));
+          options.forEach(opt => grid.appendChild(_createCard(opt, state.collarDesign, id => state.collarDesign = id)));
           container.appendChild(grid);
         }
         else if (_step === 5) {
           titleEl.textContent = 'Color de Detalles'; descEl.textContent = 'Elige el color para el cuello y los puños (si aplica a tu diseño).';
           if (!state.design?.overlayUrl) {
             const note = UTILS.createElement('div', 'empty-state');
-            note.innerHTML = `<span>ℹ️</span><p>El diseño base seleccionado no soporta colores separados para el cuello en la previsualización, pero puedes seleccionar el color para la confección.</p>`;
+            note.innerHTML = `<span>ℹ️</span><p>El diseño base seleccionado no soporta colores separados en la previsualización, pero guardaremos tu selección para la confección real.</p>`;
             container.appendChild(note);
           }
           const grid = UTILS.createElement('div', 'options-grid colors');
@@ -1293,7 +1337,9 @@
         else if (_step === 6) {
           titleEl.textContent = 'Posición del Logotipo'; descEl.textContent = '¿Dónde deseas bordar/estampar tu logo?';
           const grid = UTILS.createElement('div', 'options-grid');
-          optionsConfig.logos.forEach(opt => grid.appendChild(_createCard(opt, state.logoPos, id => state.logoPos = id)));
+          const options = STORE.getBuilderOptions('logos');
+          if (options.length === 0) container.appendChild(UTILS.createElement('div', 'empty-state', 'No hay opciones configuradas.'));
+          options.forEach(opt => grid.appendChild(_createCard(opt, state.logoPos, id => state.logoPos = id)));
           container.appendChild(grid);
         }
 
@@ -1306,11 +1352,12 @@
 
         let isValid = false;
         if (_step === 1 && state.design) isValid = true;
-        if (_step === 2 && state.placket) isValid = true;
+        // La validación ahora verifica que exista la opción, si no hay opciones en DB, permite avanzar para no bloquear
+        if (_step === 2 && (state.placket || STORE.getBuilderOptions('plackets').length === 0)) isValid = true;
         if (_step === 3 && state.baseColor) isValid = true;
-        if (_step === 4 && state.collarDesign) isValid = true;
+        if (_step === 4 && (state.collarDesign || STORE.getBuilderOptions('collars').length === 0)) isValid = true;
         if (_step === 5 && state.detailColor) isValid = true;
-        if (_step === 6 && state.logoPos) isValid = true;
+        if (_step === 6 && (state.logoPos || STORE.getBuilderOptions('logos').length === 0)) isValid = true;
 
         btn.disabled = !isValid;
       };
@@ -1318,7 +1365,6 @@
       const nextStep = () => {
         if (_step < 6) { _step++; _renderCurrentStep(); }
         else {
-          // Finalizar
           console.log("Pedido Finalizado:", state);
           UI.toast('¡Diseño completado! Preparando orden...', 'success');
           setTimeout(() => UI.showPage('page-home'), 2000);
@@ -1333,7 +1379,7 @@
     })();
 
     /* ═══════════════════════════════════════════════════
-       AUTH LOGIC
+       AUTH LOGIC & PIN VIEW
     ═══════════════════════════════════════════════════ */
     const AUTH = (() => {
       const verify = async (pin) => {
@@ -1351,9 +1397,6 @@
       return { verify, isAuth: STORE.isSessionOk, logout: STORE.clearSession, lockoutSecondsLeft: () => { const lo = STORE.getLockout(); return lo.until ? Math.max(0, Math.ceil((lo.until - Date.now()) / 1000)) : 0; } };
     })();
 
-    /* ═══════════════════════════════════════════════════
-       PIN VIEW
-    ═══════════════════════════════════════════════════ */
     const PIN_VIEW = (() => {
       let _buf = '';
       const render = () => { _buf = ''; _renderDots(); _renderKeypad(); document.getElementById('pin-error').textContent = ''; const s = AUTH.lockoutSecondsLeft(); if (s > 0) _lock(s); };
@@ -1383,22 +1426,26 @@
     })();
 
     /* ═══════════════════════════════════════════════════
-       ADMIN
+       ADMIN PANEL
     ═══════════════════════════════════════════════════ */
     const ADMIN = (() => {
       const open = () => { UI.showPage('page-admin'); switchSection('polos'); };
+
       const switchSection = (n) => {
         document.querySelectorAll('.admin-section, .admin-nav-item').forEach(e => e.classList.remove('active'));
         document.getElementById(`section-${n}`)?.classList.add('active');
         document.querySelector(`.admin-nav-item[data-section="${n}"]`)?.classList.add('active');
-        if (n === 'polos') _renderPolos(); if (n === 'colors') _renderColors();
+        if (n === 'polos') _renderPolos();
+        if (n === 'colors') _renderColors();
+        if (n === 'options') _renderConfigOptions();
       };
 
+      // POLOS Y COLORES (Lógica previa mantenida)
       const addColor = async () => {
         const name = document.getElementById('color-name').value.trim(), hex = document.getElementById('color-hex').value;
         if (!name) return UI.toast('Nombre obligatorio', 'error');
         const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-        await STORE.addColor({ id, name, hex, hexAlt: hex }); // Guardamos hexAlt igual para retrocompatibilidad
+        await STORE.addColor({ id, name, hex, hexAlt: hex });
         document.getElementById('color-name').value = ''; UI.toast('Color guardado', 'success');
       };
 
@@ -1415,7 +1462,7 @@
       const addPolo = async () => {
         const name = document.getElementById('polo-name').value.trim(), url = document.getElementById('polo-url').value.trim(), ov = document.getElementById('polo-overlay-url').value.trim();
         if (!name || !url) return UI.toast('Nombre y URL base obligatorios', 'error');
-        await STORE.addPolo({ id: Date.now().toString(36), name, imageUrl: url, overlayUrl: ov || null, colorIds: STORE.getColors().map(c => c.id) }); // Asigna todos los colores por defecto
+        await STORE.addPolo({ id: Date.now().toString(36), name, imageUrl: url, overlayUrl: ov || null, colorIds: [] });
         document.getElementById('polo-name').value = ''; document.getElementById('polo-url').value = ''; document.getElementById('polo-overlay-url').value = '';
         UI.toast('Diseño guardado', 'success');
       };
@@ -1430,11 +1477,68 @@
         });
       };
 
-      return { open, switchSection, addColor, addPolo, clearPolos: async () => { if (UI.confirm('¿Borrar todo?')) for (let p of STORE.getPolos()) await STORE.delPolo(p.id); }, clearColors: async () => { if (UI.confirm('¿Borrar todo?')) for (let c of STORE.getColors()) await STORE.delColor(c.id); } };
+      // NUEVO: Lógica de Opciones Dinámicas del Builder
+      const addConfigOption = async () => {
+        const category = document.getElementById('opt-category').value;
+        const label = document.getElementById('opt-label').value.trim();
+        const icon = document.getElementById('opt-icon').value.trim();
+
+        if (!label || !icon) return UI.toast('Nombre e Ícono son obligatorios.', 'error');
+
+        const id = Date.now().toString(36); // Generamos ID único
+
+        await STORE.addConfigOption({ id, category, label, icon });
+
+        document.getElementById('opt-label').value = '';
+        document.getElementById('opt-icon').value = '';
+        UI.toast('Opción guardada en la nube.', 'success');
+      };
+
+      const _renderConfigOptions = () => {
+        const categories = [
+          { id: 'plackets', listId: 'list-plackets' },
+          { id: 'collars', listId: 'list-collars' },
+          { id: 'logos', listId: 'list-logos' }
+        ];
+
+        const allOptions = STORE.getBuilderOptions();
+
+        categories.forEach(cat => {
+          const listEl = document.getElementById(cat.listId);
+          listEl.innerHTML = '';
+          const optionsForCat = allOptions.filter(o => o.category === cat.id);
+
+          if (optionsForCat.length === 0) {
+            listEl.appendChild(UTILS.createElement('div', 'admin-item__meta', 'No hay opciones.'));
+            return;
+          }
+
+          optionsForCat.forEach(opt => {
+            const item = UTILS.createElement('div', 'admin-item');
+            item.innerHTML = `
+              <div class="admin-item__info" style="flex-direction:row;align-items:center;gap:12px">
+                <div style="font-size: 1.5rem; width: 30px; text-align: center;">${opt.icon}</div>
+                <div><div class="admin-item__name">${opt.label}</div></div>
+              </div>
+            `;
+            const btn = UTILS.createElement('button', 'btn-danger', 'Eliminar');
+            btn.onclick = () => { if (UI.confirm(`¿Borrar opción "${opt.label}"?`)) STORE.delConfigOption(opt.id); };
+            const act = UTILS.createElement('div', 'admin-item__actions'); act.appendChild(btn); item.appendChild(act);
+            listEl.appendChild(item);
+          });
+        });
+      };
+
+      // Exponer funciones necesarias
+      return {
+        open, switchSection, addColor, addPolo, addConfigOption,
+        clearPolos: async () => { if (UI.confirm('¿Borrar todo?')) for (let p of STORE.getPolos()) await STORE.delPolo(p.id); },
+        clearColors: async () => { if (UI.confirm('¿Borrar todo?')) for (let c of STORE.getColors()) await STORE.delColor(c.id); }
+      };
     })();
 
     /* ═══════════════════════════════════════════════════
-       APP GLOBAL
+       APP GLOBAL & INIT
     ═══════════════════════════════════════════════════ */
     window.APP = {
       showHome: () => UI.showPage('page-home'),
@@ -1445,21 +1549,50 @@
     window.ADMIN = ADMIN;
     window.BUILDER = BUILDER;
 
-    // BOTÓN SECRETO ADMIN
     if (new URLSearchParams(window.location.search).get('admin') === '123') { localStorage.setItem('ps_admin', '1'); window.history.replaceState({}, '', window.location.pathname); }
     if (localStorage.getItem('ps_admin') === '1') document.getElementById('btn-admin').style.display = 'block';
 
-    // INIT
+    // INIT MÁS ROBUSTO (Descarga los datos estáticos hacia Firebase)
     async function main() {
       try {
         await initAuth();
+
+        // Sincronizar Opciones Dinámicas
+        onSnapshot(builderOptionsRef, s => {
+          STORE.state.builderOptions = s.docs.map(d => d.data());
+          // Si estamos en la sección de opciones, repintarla en tiempo real
+          if (document.getElementById('section-options')?.classList.contains('active')) {
+            ADMIN.switchSection('options');
+          }
+        });
+
         onSnapshot(colorsRef, s => { STORE.state.colors = s.docs.map(d => d.data()); });
         onSnapshot(polosRef, s => { STORE.state.polos = s.docs.map(d => d.data()); });
         onSnapshot(settingsRef, s => { if (s.exists()) { STORE.state.pinHash = s.data().pinHash; STORE.state.pinLen = s.data().pinLen; } });
 
-        setTimeout(() => {
+        setTimeout(async () => {
           document.getElementById('global-loader').classList.add('hide');
           STORE.ensureDefaultPin();
+
+          // Lógica inicial para llenar la BD si está vacía
+          // Si es la primera vez y no hay opciones, subimos las opciones predeterminadas (Data Seeding)
+          if (STORE.state.builderOptions.length === 0) {
+            console.log("Seeding base builder options...");
+            const defaultOptions = [
+              { category: 'plackets', label: 'Botones Clásicos', icon: '🔘' },
+              { category: 'plackets', label: 'Cremallera / Cierre', icon: '🤐' },
+              { category: 'collars', label: 'Cuello Clásico', icon: '👔' },
+              { category: 'collars', label: 'Cuello Deportivo (V)', icon: '🏃' },
+              { category: 'collars', label: 'Cuello Mandarín (Mao)', icon: '🥋' },
+              { category: 'logos', label: 'Pecho Izquierdo', icon: '🛡️' },
+              { category: 'logos', label: 'Pecho Derecho', icon: '🛡️' },
+              { category: 'logos', label: 'Espalda Central', icon: '🔙' }
+            ];
+            for (let opt of defaultOptions) {
+              await STORE.addConfigOption({ id: Date.now().toString(36) + Math.random().toString(36).substr(2), ...opt });
+            }
+          }
+
           APP.showHome();
         }, 1500);
       } catch (e) {
