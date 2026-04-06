@@ -1621,32 +1621,81 @@
 
       const _loadImage = (url) => new Promise((res, rej) => {
         if (!url) return res(null);
+
+        // Si la tenemos en caché local, la devolvemos al instante
         if (_imgCache.has(url)) { res(_imgCache.get(url)); return; }
 
-        let finalUrl = url;
+        let isDrive = false;
+        let driveUrl = '';
+
+        // Detectar si es un enlace de Google Drive
         const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
 
         if (driveMatch) {
+          isDrive = true;
           const fileId = driveMatch[1];
-          const directDriveLink = 'https://drive.google.com/uc?export=download&id=' + fileId;
-          finalUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(directDriveLink);
+          // Formato estándar de descarga de Drive
+          driveUrl = 'https://drive.google.com/uc?export=download&id=' + fileId;
         }
 
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => { _imgCache.set(url, img); res(img); };
-        img.onerror = () => {
-          if (!finalUrl.includes('allorigins.win')) {
-            const proxyImg = new Image();
-            proxyImg.crossOrigin = 'anonymous';
-            proxyImg.onload = () => { _imgCache.set(url, proxyImg); res(proxyImg); };
-            proxyImg.onerror = () => rej(new Error('Proxy failed'));
-            proxyImg.src = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(finalUrl);
-          } else {
-            rej(new Error('Load failed'));
-          }
+        // Función base para intentar cargar una imagen
+        const tryLoad = (src) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous'; // Fundamental para el CORS en el Canvas
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error('Fallo al cargar: ' + src));
+            img.src = src;
+          });
         };
-        img.src = finalUrl;
+
+        // Lógica de Fallbacks (Respaldos en Cascada)
+        const loadWithFallbacks = async () => {
+          if (!isDrive) {
+            // Si NO es de Drive (ej. ImgBB), intenta cargarla directo
+            try {
+              const img = await tryLoad(url);
+              _imgCache.set(url, img);
+              res(img);
+            } catch (e) {
+              // Si falla (probablemente por CORS), intenta pasarla por el proxy wsrv
+              try {
+                const imgProxy = await tryLoad('https://wsrv.nl/?url=' + encodeURIComponent(url) + '&cors=1');
+                _imgCache.set(url, imgProxy);
+                res(imgProxy);
+              } catch (e2) {
+                rej(e2);
+              }
+            }
+            return;
+          }
+
+          // 🚨 Si ES de Google Drive, tenemos 3 proxies de respaldo 🚨
+          // 1. wsrv.nl (El más rápido y estable para imágenes)
+          // 2. corsproxy.io (Excelente alternativo)
+          // 3. api.allorigins.win (El que usábamos antes, por si acaso)
+          const proxies = [
+            `https://wsrv.nl/?url=${encodeURIComponent(driveUrl)}&cors=1`,
+            `https://corsproxy.io/?${encodeURIComponent(driveUrl)}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`
+          ];
+
+          for (let i = 0; i < proxies.length; i++) {
+            try {
+              const img = await tryLoad(proxies[i]);
+              _imgCache.set(url, img); // Guardamos el éxito en caché
+              return res(img); // ¡Salió de la cascada con éxito!
+            } catch (err) {
+              console.warn(`Proxy ${i + 1} falló para imagen de Drive. Intentando el siguiente...`);
+            }
+          }
+
+          // Si los 3 proxies fallaron, lanzamos el error final
+          rej(new Error('Todos los servidores proxy fallaron para la imagen de Google Drive.'));
+        };
+
+        // Iniciamos la carga
+        loadWithFallbacks();
       });
 
       const _hexToRgb = (hex) => {
@@ -2443,8 +2492,30 @@
 
       } catch (error) {
         console.error("Firebase Auth Error:", error);
-        UI.toast('Error conectando al servidor.', 'error');
-        document.getElementById('global-loader').innerHTML = '<span style="color:var(--danger)">Error de Conexión</span>';
+
+        let errorMsg = 'Error conectando al servidor.';
+        let uiMsg = 'Error de Conexión';
+
+        // Manejo de errores profesional (Senior Dev)
+        if (error.code === 'auth/admin-restricted-operation') {
+          errorMsg = 'Operación bloqueada. ¿Abriste el archivo con doble clic (file://)? Usa un servidor local o súbelo a GitHub.';
+          uiMsg = 'Error de Entorno';
+        } else if (error.code === 'auth/unauthorized-domain') {
+          errorMsg = 'Este dominio no está autorizado. Ve a Firebase > Auth > Configuración > Dominios autorizados.';
+          uiMsg = 'Dominio no Autorizado';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          errorMsg = 'El inicio de sesión anónimo está desactivado en Firebase Auth.';
+          uiMsg = 'Autenticación Inactiva';
+        }
+
+        UI.toast(errorMsg, 'error');
+        document.getElementById('global-loader').innerHTML = `
+          <div style="text-align:center; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <span style="font-size: 2.5rem;">🛑</span>
+            <span style="color:var(--danger); font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em;">${uiMsg}</span>
+            <p style="color:var(--text-muted); font-size: 0.85rem; max-width: 320px; line-height: 1.5;">${errorMsg}</p>
+          </div>
+        `;
       }
     }
 
