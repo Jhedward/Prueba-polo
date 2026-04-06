@@ -201,7 +201,6 @@
       max-width: 420px
     }
 
-    /* MEJORA: Buscador */
     .catalog-search-wrap {
       position: relative;
       width: 100%;
@@ -242,7 +241,6 @@
       flex: 1;
     }
 
-    /* Polo card */
     .polo-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -413,7 +411,6 @@
       animation: floatIn .6s var(--t-spring) both;
     }
 
-    /* MEJORA: Estado de carga superpuesto en el canvas */
     .viewer-loader {
       position: absolute;
       z-index: 2;
@@ -540,7 +537,6 @@
       padding: 0 24px 24px;
     }
 
-    /* Swatch */
     .swatch {
       display: flex;
       flex-direction: column;
@@ -1152,10 +1148,48 @@
         transform: rotate(360deg)
       }
     }
+
+    /* Spinner de carga inicial */
+    #global-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+
+    #global-loader.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #global-loader .spinner {
+      width: 40px;
+      height: 40px;
+      border-width: 3px;
+      border-top-color: var(--accent);
+    }
+
+    #global-loader span {
+      font-family: var(--font-display);
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- ═══════ PANTALLA DE CARGA INICIAL ═══════ -->
+  <div id="global-loader">
+    <div class="spinner"></div>
+    <span>CONECTANDO A LA NUBE...</span>
+  </div>
 
   <!-- ═══════ TOAST ═══════ -->
   <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
@@ -1165,13 +1199,13 @@
   ═══════════════════════════════════════════════════ -->
   <div class="page active" id="page-catalog">
     <header class="site-header">
-      <a class="brand" href="#" onclick="APP.showCatalog();return false">
+      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
         <span class="brand-mark">POLO</span>
         <span class="brand-sub">STUDIO</span>
       </a>
       <div class="header-actions">
         <!-- BOTÓN OCULTO POR DEFECTO -->
-        <button id="btn-admin" class="btn-ghost" style="display: none;" onclick="APP.showPin()">⚙ Admin</button>
+        <button id="btn-admin" class="btn-ghost" style="display: none;" onclick="window.APP.showPin()">⚙ Admin</button>
       </div>
     </header>
     <div class="catalog-hero">
@@ -1194,7 +1228,7 @@
   ═══════════════════════════════════════════════════ -->
   <div class="page" id="page-viewer">
     <header class="site-header">
-      <a class="brand" href="#" onclick="APP.showCatalog();return false">
+      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
         <span class="brand-mark">POLO</span>
         <span class="brand-sub">STUDIO</span>
       </a>
@@ -1210,7 +1244,8 @@
         </div>
       </div>
       <div class="viewer-panel">
-        <button class="viewer-back" onclick="APP.showCatalog()" aria-label="Volver al catálogo"> Catálogo</button>
+        <button class="viewer-back" onclick="window.APP.showCatalog()" aria-label="Volver al catálogo">
+          Catálogo</button>
         <div class="viewer-info">
           <div class="viewer-polo-name" id="viewer-polo-name">Polo</div>
           <div class="viewer-color-badge" id="viewer-badge">
@@ -1236,7 +1271,7 @@
       <div class="pin-keypad" id="pin-keypad"></div>
       <div class="pin-error-msg" id="pin-error" aria-live="assertive"></div>
       <button class="btn-ghost" style="width:100%;margin-top:16px;justify-content:center"
-        onclick="APP.showCatalog()">Cancelar</button>
+        onclick="window.APP.showCatalog()">Cancelar</button>
     </div>
   </div>
 
@@ -1245,23 +1280,23 @@
   ═══════════════════════════════════════════════════ -->
   <div class="page" id="page-admin">
     <header class="site-header">
-      <a class="brand" href="#" onclick="APP.showCatalog();return false">
+      <a class="brand" href="#" onclick="window.APP.showCatalog();return false">
         <span class="brand-mark">POLO</span>
         <span class="brand-sub">STUDIO</span>
       </a>
       <div class="header-actions">
-        <button class="btn-ghost" onclick="APP.logout()">Cerrar sesión</button>
+        <button class="btn-ghost" onclick="window.APP.logout()">Cerrar sesión</button>
       </div>
     </header>
     <div class="admin-layout">
       <nav class="admin-nav" role="navigation" aria-label="Menú de administración">
-        <button class="admin-nav-item active" data-section="polos" onclick="ADMIN.switchSection('polos')">
+        <button class="admin-nav-item active" data-section="polos" onclick="window.ADMIN.switchSection('polos')">
           <span class="nav-icon">👕</span>Polos
         </button>
-        <button class="admin-nav-item" data-section="colors" onclick="ADMIN.switchSection('colors')">
+        <button class="admin-nav-item" data-section="colors" onclick="window.ADMIN.switchSection('colors')">
           <span class="nav-icon">🎨</span>Colores
         </button>
-        <button class="admin-nav-item" data-section="settings" onclick="ADMIN.switchSection('settings')">
+        <button class="admin-nav-item" data-section="settings" onclick="window.ADMIN.switchSection('settings')">
           <span class="nav-icon">⚙️</span>Ajustes & Data
         </button>
       </nav>
@@ -1270,8 +1305,7 @@
         <!-- SECCIÓN: POLOS -->
         <div class="admin-section active" id="section-polos">
           <div class="admin-section-title">Catálogo de Polos</div>
-          <div class="admin-section-sub">Agrega y administra los modelos del catálogo. Usa imágenes base y detalles
-            separados para cuellos.</div>
+          <div class="admin-section-sub">Agrega y administra los modelos del catálogo (Sincronizado en la Nube).</div>
           <div class="form-card">
             <h3>Agregar nueva polo</h3>
             <div class="field">
@@ -1281,12 +1315,13 @@
             <div class="form-row">
               <div class="field">
                 <label for="polo-url">URL Imagen Base (Cuerpo) *</label>
-                <input type="url" id="polo-url" placeholder="https://..." oninput="ADMIN.previewImage()" />
+                <input type="url" id="polo-url" placeholder="https://..." oninput="window.ADMIN.previewImage()" />
                 <small>Sube el PNG del cuerpo de la camiseta.</small>
               </div>
               <div class="field">
                 <label for="polo-overlay-url">URL Imagen Detalles (Cuello/Puños)</label>
-                <input type="url" id="polo-overlay-url" placeholder="https://..." oninput="ADMIN.previewImage()" />
+                <input type="url" id="polo-overlay-url" placeholder="https://..."
+                  oninput="window.ADMIN.previewImage()" />
                 <small>Opcional: Sube un PNG (mismo tamaño que el base) que solo contenga el cuello o los puños.</small>
               </div>
             </div>
@@ -1300,7 +1335,7 @@
               <label>Colores habilitados para este modelo</label>
               <div id="polo-color-checkboxes" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px"></div>
             </div>
-            <button class="btn btn-primary" onclick="ADMIN.addPolo()">+ Agregar polo</button>
+            <button class="btn btn-primary" onclick="window.ADMIN.addPolo()">+ Agregar polo</button>
           </div>
 
           <div class="admin-section-title" style="font-size:1.3rem;margin-bottom:12px">Modelos actuales</div>
@@ -1310,8 +1345,7 @@
         <!-- SECCIÓN: COLORES -->
         <div class="admin-section" id="section-colors">
           <div class="admin-section-title">Gestión de Colores</div>
-          <div class="admin-section-sub">Define la paleta global disponible. Ahora puedes crear colores con detalles
-            combinados.</div>
+          <div class="admin-section-sub">Define la paleta global disponible en la nube.</div>
           <div class="form-card">
             <h3>Agregar color</h3>
             <div class="field">
@@ -1329,17 +1363,17 @@
                 <small>Solo se aplicará si la Polo tiene una imagen de detalles asignada.</small>
               </div>
             </div>
-            <button class="btn btn-primary" onclick="ADMIN.addColor()">+ Agregar color</button>
+            <button class="btn btn-primary" onclick="window.ADMIN.addColor()">+ Agregar color</button>
           </div>
 
           <div class="admin-section-title" style="font-size:1.3rem;margin-bottom:12px">Colores actuales</div>
           <div class="admin-list" id="color-list"></div>
         </div>
 
-        <!-- SECCIÓN: AJUSTES & DATA (MEJORADA) -->
+        <!-- SECCIÓN: AJUSTES & DATA -->
         <div class="admin-section" id="section-settings">
           <div class="admin-section-title">Ajustes & Datos</div>
-          <div class="admin-section-sub">Configura el acceso y respalda tu catálogo.</div>
+          <div class="admin-section-sub">Configura el acceso y respalda tu catálogo de la nube.</div>
 
           <div class="form-card">
             <h3>Cambiar PIN de acceso</h3>
@@ -1353,30 +1387,31 @@
                 <input type="password" id="pin-new" placeholder="Nuevo PIN" maxlength="6" inputmode="numeric" />
               </div>
             </div>
-            <button class="btn btn-primary" onclick="ADMIN.changePin()">Actualizar PIN</button>
+            <button class="btn btn-primary" onclick="window.ADMIN.changePin()">Actualizar PIN</button>
           </div>
 
-          <!-- MEJORA: Backup System -->
           <div class="form-card">
-            <h3>📦 Respaldo de Datos (Importar / Exportar)</h3>
-            <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px">Guarda una copia de seguridad de
-              todos tus colores y polos configurados, o restaura un respaldo previo.</p>
+            <h3>📦 Respaldo Local (Importar / Exportar)</h3>
+            <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px">Guarda una copia de seguridad en tu
+              PC de los datos alojados en la nube.</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn btn-primary" onclick="ADMIN.exportData()">Descargar Backup (JSON)</button>
+              <button class="btn btn-primary" onclick="window.ADMIN.exportData()">Descargar Backup (JSON)</button>
               <input type="file" id="import-file" accept=".json" style="display:none"
-                onchange="ADMIN.importData(event)">
+                onchange="window.ADMIN.importData(event)">
               <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">Subir Backup
-                (Restaurar)</button>
+                (Restaurar en la Nube)</button>
             </div>
           </div>
 
           <div class="form-card" style="border-color:rgba(224,92,92,.2)">
             <h3 style="color:var(--danger)">Zona de peligro</h3>
             <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px">Estas acciones vaciarán la base de
-              datos actual.</p>
+              datos EN LA NUBE para todos los usuarios.</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn btn-danger btn-sm" onclick="ADMIN.clearPolos()">🗑 Eliminar todos los modelos</button>
-              <button class="btn btn-danger btn-sm" onclick="ADMIN.clearColors()">🗑 Eliminar todos los colores</button>
+              <button class="btn btn-danger btn-sm" onclick="window.ADMIN.clearPolos()">🗑 Eliminar todos los
+                modelos</button>
+              <button class="btn btn-danger btn-sm" onclick="window.ADMIN.clearColors()">🗑 Eliminar todos los
+                colores</button>
             </div>
           </div>
         </div>
@@ -1385,962 +1420,1036 @@
     </div>
   </div>
 
-  <script>
-    (function () {
-      'use strict';
+  <!-- CONEXIÓN FIREBASE EN LA NUBE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-      /* ═══════════════════════════════════════════════════
-         UTILS — Funciones de utilidad pura (DRY)
-      ═══════════════════════════════════════════════════ */
-      const UTILS = (() => {
-        // Prevención estricta de XSS (Cross-Site Scripting) al construir DOM dinámico
-        const createElement = (tag, classNames = '', textContent = '') => {
-          const el = document.createElement(tag);
-          if (classNames) el.className = classNames;
-          if (textContent) el.textContent = textContent;
-          return el;
-        };
-
-        // Debounce para optimizar el buscador de polos
-        const debounce = (func, wait) => {
-          let timeout;
-          return function executedFunction(...args) {
-            const later = () => { clearTimeout(timeout); func(...args); };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-          };
-        };
-
-        // Descarga de archivos Blob para exportación de datos
-        const downloadJSON = (obj, filename) => {
-          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-          const dlAnchorElem = document.createElement('a');
-          dlAnchorElem.setAttribute("href", dataStr);
-          dlAnchorElem.setAttribute("download", filename);
-          dlAnchorElem.click();
-          dlAnchorElem.remove();
-        };
-
-        return { createElement, debounce, downloadJSON };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         CONFIG
-      ═══════════════════════════════════════════════════ */
-      const CFG = {
-        PIN_KEY: 'ps_pin',
-        PIN_LEN_KEY: 'ps_pin_len',
-        POLOS_KEY: 'ps_polos',
-        COLORS_KEY: 'ps_colors',
-        SESSION_KEY: 'ps_session',
-        LOCKOUT_KEY: 'ps_lockout',
-        DEFAULT_PIN: '1234',
-        SESSION_TTL: 30 * 60 * 1000,
-        LOCKOUT_TTL: 60 * 1000,
-        MAX_ATTEMPTS: 5
+    /* ═══════════════════════════════════════════════════
+       UTILS — Funciones de utilidad pura (DRY)
+    ═══════════════════════════════════════════════════ */
+    const UTILS = (() => {
+      const createElement = (tag, classNames = '', textContent = '') => {
+        const el = document.createElement(tag);
+        if (classNames) el.className = classNames;
+        if (textContent) el.textContent = textContent;
+        return el;
       };
 
-      /* ═══════════════════════════════════════════════════
-         CRYPTO — Hash SHA-256
-      ═══════════════════════════════════════════════════ */
-      const CRYPTO = (() => {
-        const hash = async (pin) => {
-          const enc = new TextEncoder();
-          const buf = await crypto.subtle.digest('SHA-256', enc.encode(pin));
-          return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => { clearTimeout(timeout); func(...args); };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
         };
-        return { hash };
-      })();
+      };
 
-      /* ═══════════════════════════════════════════════════
-         STORE — CRUD y Backup
-      ═══════════════════════════════════════════════════ */
-      const STORE = (() => {
-        const _get = (key, def) => {
-          try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
-          catch { return def; }
-        };
-        const _set = (key, val) => {
-          try { localStorage.setItem(key, JSON.stringify(val)); return true; }
-          catch (e) { console.error('[STORE] write error:', e); return false; }
-        };
+      const downloadJSON = (obj, filename) => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", filename);
+        dlAnchorElem.click();
+        dlAnchorElem.remove();
+      };
 
-        const getPinHash = () => _get(CFG.PIN_KEY, null);
-        const setPinHash = (hash) => _set(CFG.PIN_KEY, hash);
-        const getPinLen = () => _get(CFG.PIN_LEN_KEY, 4);
-        const setPinLen = (len) => _set(CFG.PIN_LEN_KEY, len);
+      return { createElement, debounce, downloadJSON };
+    })();
 
-        const getLockout = () => _get(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
-        const setLockout = (obj) => _set(CFG.LOCKOUT_KEY, obj);
-        const clearLockout = () => _set(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
+    /* ═══════════════════════════════════════════════════
+       CONFIG
+    ═══════════════════════════════════════════════════ */
+    const CFG = {
+      SESSION_KEY: 'ps_session',
+      LOCKOUT_KEY: 'ps_lockout',
+      DEFAULT_PIN: '1234',
+      SESSION_TTL: 30 * 60 * 1000,
+      LOCKOUT_TTL: 60 * 1000,
+      MAX_ATTEMPTS: 5
+    };
 
-        const getColors = () => _get(CFG.COLORS_KEY, _defaultColors());
-        const setColors = (arr) => _set(CFG.COLORS_KEY, arr);
-        const addColor = (c) => { const arr = getColors(); arr.push(c); return _set(CFG.COLORS_KEY, arr); };
-        const delColor = (id) => _set(CFG.COLORS_KEY, getColors().filter(c => c.id !== id));
+    /* ═══════════════════════════════════════════════════
+       CRYPTO — Hash SHA-256
+    ═══════════════════════════════════════════════════ */
+    const CRYPTO = (() => {
+      const hash = async (pin) => {
+        const enc = new TextEncoder();
+        const buf = await crypto.subtle.digest('SHA-256', enc.encode(pin));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      };
+      return { hash };
+    })();
 
-        const getPolos = () => _get(CFG.POLOS_KEY, []);
-        const setPolos = (arr) => _set(CFG.POLOS_KEY, arr);
-        const addPolo = (p) => { const arr = getPolos(); arr.push(p); return _set(CFG.POLOS_KEY, arr); };
-        const delPolo = (id) => _set(CFG.POLOS_KEY, getPolos().filter(p => p.id !== id));
+    /* ═══════════════════════════════════════════════════
+       FIREBASE INITIALIZATION (SOPORTA CANVAS Y PRODUCCIÓN)
+    ═══════════════════════════════════════════════════ */
+    // 👇 1. PEGA TUS DATOS DE FIREBASE AQUÍ PARA CUANDO LO SUBAS A GITHUB 👇
+    const miConfiguracionFirebase = {
+      apiKey: "AIzaSyCLAcSSWdHsZBu5y58qhAu3dQf-dmWBnvw",
+      authDomain: "polo-studio-app.firebaseapp.com",
+      projectId: "polo-studio-app",
+      storageBucket: "polo-studio-app.firebasestorage.app",
+      messagingSenderId: "561143462000",
+      appId: "1:561143462000:web:28d91b0d2ed910bb22dcb5"
+    };
 
-        const getSession = () => _get(CFG.SESSION_KEY, null);
-        const setSession = () => _set(CFG.SESSION_KEY, Date.now());
-        const clearSession = () => localStorage.removeItem(CFG.SESSION_KEY);
-        const isSessionOk = () => { const s = getSession(); return s && (Date.now() - s) < CFG.SESSION_TTL; };
+    // Ponle un apodo a tu base de datos (se usa para organizar las colecciones en tu Firestore)
+    const miNombreDeApp = 'polo-studio-oficial';
+    // 👆 ══════════════════════════════════════════════════════════════ 👆
 
-        // MEJORA: Lógica de Exportación e Importación de datos.
-        const exportDataObj = () => ({
-          version: 2,
-          colors: getColors(),
-          polos: getPolos(),
-          timestamp: new Date().toISOString()
-        });
+    // Lógica Híbrida: Detecta si estás probando aquí en la web (Canvas) o en GitHub.
+    const isCanvasEnv = typeof __firebase_config !== 'undefined';
+    const firebaseConfig = isCanvasEnv ? JSON.parse(__firebase_config) : miConfiguracionFirebase;
+    const appId = isCanvasEnv && typeof __app_id !== 'undefined' ? __app_id : miNombreDeApp;
 
-        const importDataObj = (dataObj) => {
-          if (!dataObj || !Array.isArray(dataObj.colors) || !Array.isArray(dataObj.polos)) {
-            throw new Error("Formato de archivo inválido.");
-          }
-          setColors(dataObj.colors);
-          setPolos(dataObj.polos);
-          return true;
-        };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        function _defaultColors() {
-          return [
-            { id: 'blanco-perla', name: 'Blanco Perla', hex: '#F5F0E8', hexAlt: '#F5F0E8' },
-            { id: 'negro-carbon', name: 'Negro Carbón', hex: '#1A1A1A', hexAlt: '#1A1A1A' },
-            { id: 'azul-marino', name: 'Azul Marino', hex: '#1B2E4B', hexAlt: '#1B2E4B' },
-            { id: 'blanco-marino', name: 'Blanco / Marino', hex: '#F5F0E8', hexAlt: '#1B2E4B' },
-            { id: 'verde-bosque', name: 'Verde Bosque', hex: '#2D5016', hexAlt: '#2D5016' }
-          ];
+    // Colecciones estandarizadas
+    const polosRef = collection(db, 'artifacts', appId, 'public', 'data', 'polos');
+    const colorsRef = collection(db, 'artifacts', appId, 'public', 'data', 'colors');
+    const settingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'auth');
+
+    // Inicializar Auth de manera segura
+    const initAuth = async () => {
+      // Usa el token de la plataforma si estás en el Canvas, de lo contrario inicia Anónimo puro (Para GitHub)
+      if (isCanvasEnv && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    };
+
+    /* ═══════════════════════════════════════════════════
+       STORE CLOUD — CRUD conectado a Firestore
+    ═══════════════════════════════════════════════════ */
+    const STORE = (() => {
+      let state = {
+        polos: [],
+        colors: [],
+        pinHash: null,
+        pinLen: 4
+      };
+
+      const _get = (key, def) => {
+        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+      };
+      const _set = (key, val) => {
+        try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; }
+      };
+
+      // Control Local
+      const getLockout = () => _get(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
+      const setLockout = (obj) => _set(CFG.LOCKOUT_KEY, obj);
+      const clearLockout = () => _set(CFG.LOCKOUT_KEY, { until: 0, attempts: 0 });
+      const getSession = () => _get(CFG.SESSION_KEY, null);
+      const setSession = () => _set(CFG.SESSION_KEY, Date.now());
+      const clearSession = () => localStorage.removeItem(CFG.SESSION_KEY);
+      const isSessionOk = () => { const s = getSession(); return s && (Date.now() - s) < CFG.SESSION_TTL; };
+
+      // Lectura en Memoria (Actualizada por Firestore en tiempo real)
+      const getPolos = () => state.polos;
+      const getColors = () => state.colors;
+      const getPinHash = () => state.pinHash;
+      const getPinLen = () => state.pinLen;
+
+      // Escrituras Asíncronas en la Nube
+      const addColor = async (c) => await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'colors', c.id), c);
+      const delColor = async (id) => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'colors', id));
+
+      const addPolo = async (p) => await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', p.id), p);
+      const delPolo = async (id) => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', id));
+
+      const updatePolosBatch = async (polosArray) => {
+        // En una app más grande se usaría writeBatch. Aquí para simplicidad y mantenerlo en una función.
+        for (const p of polosArray) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'polos', p.id), p);
+        }
+      };
+
+      const setPinData = async (hash, len) => {
+        await setDoc(settingsRef, { pinHash: hash, pinLen: len });
+      };
+
+      const exportDataObj = () => ({
+        version: 2,
+        colors: state.colors,
+        polos: state.polos,
+        timestamp: new Date().toISOString()
+      });
+
+      const importDataObj = async (dataObj) => {
+        if (!dataObj || !Array.isArray(dataObj.colors) || !Array.isArray(dataObj.polos)) throw new Error("Formato inválido");
+
+        UI.toast('Subiendo a la nube, por favor espera...', 'success');
+
+        // 1. Borrar existentes
+        for (const c of state.colors) await delColor(c.id);
+        for (const p of state.polos) await delPolo(p.id);
+
+        // 2. Subir nuevos
+        for (const c of dataObj.colors) await addColor(c);
+        for (const p of dataObj.polos) await addPolo(p);
+      };
+
+      // Si no hay PIN, seteamos el de por defecto.
+      const ensureDefaultPin = async () => {
+        if (!state.pinHash) {
+          const h = await CRYPTO.hash(CFG.DEFAULT_PIN);
+          await setPinData(h, CFG.DEFAULT_PIN.length);
+        }
+      };
+
+      return {
+        state, getLockout, setLockout, clearLockout,
+        getColors, addColor, delColor,
+        getPolos, addPolo, delPolo, updatePolosBatch,
+        getPinHash, getPinLen, setPinData, ensureDefaultPin,
+        getSession, setSession, clearSession, isSessionOk,
+        exportDataObj, importDataObj
+      };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       COLORIZER — Core de manipulación de Canvas
+    ═══════════════════════════════════════════════════ */
+    const COLORIZER = (() => {
+      const _imgCache = new Map();
+
+      const _loadImage = (url) => new Promise((res, rej) => {
+        if (!url) return res(null);
+        if (_imgCache.has(url)) { res(_imgCache.get(url)); return; }
+
+        let finalUrl = url;
+        const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+
+        if (driveMatch) {
+          const fileId = driveMatch[1];
+          const directDriveLink = 'https://drive.google.com/uc?export=download&id=' + fileId;
+          finalUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(directDriveLink);
         }
 
-        return {
-          getPinHash, setPinHash, getPinLen, setPinLen, getLockout, setLockout, clearLockout,
-          getColors, setColors, addColor, delColor,
-          getPolos, setPolos, addPolo, delPolo,
-          getSession, setSession, clearSession, isSessionOk,
-          exportDataObj, importDataObj
-        };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         COLORIZER — Core de manipulación de Canvas
-      ═══════════════════════════════════════════════════ */
-      const COLORIZER = (() => {
-
-        const _imgCache = new Map();
-
-        const _loadImage = (url) => new Promise((res, rej) => {
-          if (!url) return res(null);
-          if (_imgCache.has(url)) { res(_imgCache.get(url)); return; }
-
-          let finalUrl = url;
-          const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-
-          if (driveMatch) {
-            const fileId = driveMatch[1];
-            const directDriveLink = 'https://drive.google.com/uc?export=download&id=' + fileId;
-            finalUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(directDriveLink);
-          }
-
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-
-          img.onload = () => { _imgCache.set(url, img); res(img); };
-          img.onerror = () => {
-            if (!finalUrl.includes('allorigins.win')) {
-              const proxyImg = new Image();
-              proxyImg.crossOrigin = 'anonymous';
-              proxyImg.onload = () => { _imgCache.set(url, proxyImg); res(proxyImg); };
-              proxyImg.onerror = () => rej(new Error('Proxy failed'));
-              proxyImg.src = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(finalUrl);
-            } else {
-              rej(new Error('Load failed'));
-            }
-          };
-          img.src = finalUrl;
-        });
-
-        const _hexToRgb = (hex) => {
-          const c = hex.replace('#', '');
-          return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)];
-        };
-
-        const hexToRgbStr = (hex) => _hexToRgb(hex).join(', ');
-        const contrastColor = (hex) => {
-          const [r, g, b] = _hexToRgb(hex);
-          return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff';
-        };
-
-        const _applyMultiplyFilter = (ctx, canvasWidth, canvasHeight, hexColor) => {
-          const [tr, tg, tb] = _hexToRgb(hexColor);
-          const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-          const data = imageData.data;
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
-            if (a < 10) continue;
-            data[i] = Math.round((r * tr) / 255);
-            data[i + 1] = Math.round((g * tg) / 255);
-            data[i + 2] = Math.round((b * tb) / 255);
-          }
-          ctx.putImageData(imageData, 0, 0);
-        };
-
-        const colorize = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
-          if (!canvas || !imageUrl) return;
-          const ctx = canvas.getContext('2d', { willReadFrequently: true });
-          let imgBase, imgOverlay;
-
-          try {
-            imgBase = await _loadImage(imageUrl);
-            if (overlayUrl) imgOverlay = await _loadImage(overlayUrl);
-          } catch (e) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(224,92,92,0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#e05c5c';
-            ctx.font = '14px DM Sans, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('❌ Imagen no disponible', canvas.width / 2, canvas.height / 2);
-            return;
-          }
-
-          const ratio = imgBase.naturalWidth / imgBase.naturalHeight;
-          if (ratio > 1) { canvas.width = 400; canvas.height = Math.round(400 / ratio); }
-          else { canvas.height = 480; canvas.width = Math.round(480 * ratio); }
-
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(imgBase, 0, 0, canvas.width, canvas.height);
-          _applyMultiplyFilter(ctx, canvas.width, canvas.height, hex);
-
-          if (imgOverlay && hexAlt) {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
-            tempCtx.drawImage(imgOverlay, 0, 0, tempCanvas.width, tempCanvas.height);
-            _applyMultiplyFilter(tempCtx, tempCanvas.width, tempCanvas.height, hexAlt);
-            ctx.drawImage(tempCanvas, 0, 0);
-          }
-        };
-
-        const colorizeThumbnail = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
-          canvas.width = 200; canvas.height = 240;
-          await colorize(canvas, imageUrl, hex, overlayUrl, hexAlt);
-        };
-
-        return { colorize, colorizeThumbnail, hexToRgbStr, contrastColor };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         AUTH — Módulo de Autenticación
-      ═══════════════════════════════════════════════════ */
-      const AUTH = (() => {
-        const _migrate = async () => {
-          const stored = STORE.getPinHash();
-          if (!stored || !/^[0-9a-f]{64}$/.test(stored)) {
-            const plain = (stored && stored.length <= 6) ? stored : CFG.DEFAULT_PIN;
-            const h = await CRYPTO.hash(plain);
-            STORE.setPinHash(h);
-            STORE.setPinLen(plain.length);
-          }
-        };
-        _migrate();
-
-        const _isLocked = () => {
-          const lo = STORE.getLockout();
-          if (lo.until && Date.now() < lo.until) return true;
-          if (lo.until && Date.now() >= lo.until) STORE.clearLockout();
-          return false;
-        };
-
-        const _lockoutSecondsLeft = () => {
-          const lo = STORE.getLockout();
-          if (!lo.until) return 0;
-          return Math.max(0, Math.ceil((lo.until - Date.now()) / 1000));
-        };
-
-        const verify = async (pin) => {
-          if (_isLocked()) return { status: 'locked', seconds: _lockoutSecondsLeft() };
-          const inputHash = await CRYPTO.hash(pin);
-          const storedHash = STORE.getPinHash();
-
-          if (inputHash === storedHash) {
-            STORE.clearLockout();
-            STORE.setSession();
-            return { status: 'ok' };
-          }
-
-          const lo = STORE.getLockout();
-          const attempts = (lo.attempts || 0) + 1;
-          if (attempts >= CFG.MAX_ATTEMPTS) {
-            STORE.setLockout({ attempts, until: Date.now() + CFG.LOCKOUT_TTL });
-            return { status: 'locked', seconds: CFG.LOCKOUT_TTL / 1000 };
-          }
-          STORE.setLockout({ attempts, until: 0 });
-          return { status: 'fail', remaining: CFG.MAX_ATTEMPTS - attempts };
-        };
-
-        const changePin = async (current, next) => {
-          if (!/^\d{4,6}$/.test(next)) return false;
-          const currentHash = await CRYPTO.hash(current);
-          if (currentHash !== STORE.getPinHash()) return false;
-          const nextHash = await CRYPTO.hash(next);
-          STORE.setPinHash(nextHash);
-          STORE.setPinLen(next.length);
-          return true;
-        };
-
-        const logout = () => STORE.clearSession();
-        const isAuth = () => STORE.isSessionOk();
-        const lockoutSecondsLeft = _lockoutSecondsLeft;
-
-        return { verify, changePin, logout, isAuth, lockoutSecondsLeft };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         UI HELPERS
-      ═══════════════════════════════════════════════════ */
-      const UI = (() => {
-        let _toastTimer = null;
-        const showPage = (id) => {
-          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-          const pg = document.getElementById(id);
-          if (pg) pg.classList.add('active');
-          window.scrollTo(0, 0);
-        };
-        const toast = (msg, type = '') => {
-          const el = document.getElementById('toast');
-          el.textContent = msg;
-          el.className = 'toast show ' + type;
-          clearTimeout(_toastTimer);
-          _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-        };
-        const confirm = (msg) => window.confirm(msg);
-        return { showPage, toast, confirm };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         CATALOG VIEW — Refactorizado para Seguridad (Nodos DOM) y Búsqueda
-      ═══════════════════════════════════════════════════ */
-      const CATALOG = (() => {
-        const _searchInput = document.getElementById('catalog-search');
-        let _currentFilter = '';
-
-        // Escucha cambios en el input con un debounce de 300ms para evitar lag
-        _searchInput.addEventListener('input', UTILS.debounce((e) => {
-          _currentFilter = e.target.value.toLowerCase().trim();
-          render();
-        }, 300));
-
-        const render = async () => {
-          const grid = document.getElementById('catalog-grid');
-          const polos = STORE.getPolos();
-          const colors = STORE.getColors();
-          const colorMap = Object.fromEntries(colors.map(c => [c.id, c]));
-
-          grid.innerHTML = ''; // Limpiamos seguro (vaciando hijos)
-
-          if (!polos.length) {
-            const emptyState = UTILS.createElement('div', 'catalog-empty');
-            emptyState.appendChild(UTILS.createElement('span', '', '👕'));
-            emptyState.appendChild(UTILS.createElement('p', '', 'El catálogo está vacío. El administrador aún no ha agregado polos.'));
-            grid.appendChild(emptyState);
-            return;
-          }
-
-          // Aplicar filtro de búsqueda
-          const filteredPolos = polos.filter(p => {
-            const matchName = p.name.toLowerCase().includes(_currentFilter);
-            const matchColor = (p.colorIds || []).some(cid => {
-              const c = colorMap[cid];
-              return c && c.name.toLowerCase().includes(_currentFilter);
-            });
-            return matchName || matchColor;
-          });
-
-          if (!filteredPolos.length) {
-            const emptySearch = UTILS.createElement('div', 'catalog-empty');
-            emptySearch.appendChild(UTILS.createElement('p', '', 'No se encontraron modelos con esa búsqueda.'));
-            grid.appendChild(emptySearch);
-            return;
-          }
-
-          for (const polo of filteredPolos) {
-            const card = UTILS.createElement('div', 'polo-card');
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.addEventListener('click', () => VIEWER.open(polo));
-            card.addEventListener('keyup', (e) => { if (e.key === 'Enter') VIEWER.open(polo); });
-
-            // Thumbnail
-            const thumbWrap = UTILS.createElement('div', 'polo-card__thumb');
-            const thumb = UTILS.createElement('canvas');
-            thumb.width = 200; thumb.height = 240;
-            thumbWrap.appendChild(thumb);
-            card.appendChild(thumbWrap);
-
-            // Info
-            const info = UTILS.createElement('div', 'polo-card__info');
-            info.appendChild(UTILS.createElement('div', 'polo-card__name', polo.name));
-
-            // Colors dots
-            const dotsWrap = UTILS.createElement('div', 'polo-card__colors');
-            (polo.colorIds || []).forEach(cid => {
-              const c = colorMap[cid];
-              if (!c) return;
-              const dot = UTILS.createElement('span', 'polo-card__dot');
-              dot.style.background = 'linear-gradient(135deg, ' + c.hex + ' 50%, ' + (c.hexAlt || c.hex) + ' 50%)';
-              dot.title = c.name;
-              dotsWrap.appendChild(dot);
-            });
-            info.appendChild(dotsWrap);
-
-            // CTA
-            const ctaEl = UTILS.createElement('div', 'polo-card__cta', 'Ver colores');
-            info.appendChild(ctaEl);
-            card.appendChild(info);
-            grid.appendChild(card);
-
-            // Async Render de miniatura
-            const firstColorId = (polo.colorIds || [])[0];
-            const firstColor = firstColorId ? colorMap[firstColorId] : null;
-            if (polo.imageUrl && firstColor) {
-              COLORIZER.colorizeThumbnail(thumb, polo.imageUrl, firstColor.hex, polo.overlayUrl, firstColor.hexAlt || firstColor.hex)
-                .catch(() => {
-                  thumbWrap.innerHTML = '';
-                  thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
-                });
-            } else if (!polo.imageUrl) {
-              thumbWrap.innerHTML = '';
-              thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
-            }
-          }
-        };
-
-        return { render };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         VIEWER — Manejo de Estados de Carga
-      ═══════════════════════════════════════════════════ */
-      const VIEWER = (() => {
-        let _currentPolo = null;
-        let _colorizing = false;
-
-        const open = (polo) => {
-          _currentPolo = polo;
-          document.getElementById('viewer-polo-name').textContent = polo.name;
-
-          // Reset UI antes de mostrar
-          document.getElementById('viewer-canvas').style.opacity = '0';
-          document.getElementById('viewer-glow').style.background = 'transparent';
-
-          _renderSwatches();
-          UI.showPage('page-viewer');
-          const colors = STORE.getColors();
-          const available = colors.filter(c => (polo.colorIds || []).includes(c.id));
-          if (available.length) _applyColor(available[0]);
-        };
-
-        const _renderSwatches = () => {
-          const wrap = document.getElementById('viewer-swatches');
-          const colors = STORE.getColors();
-          const available = colors.filter(c => (_currentPolo.colorIds || []).includes(c.id));
-          wrap.innerHTML = ''; // Safe clear
-
-          available.forEach((c, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'swatch';
-            btn.style.setProperty('--swatch-hex', c.hex);
-            btn.style.setProperty('--swatch-alt', c.hexAlt || c.hex);
-            btn.style.setProperty('--swatch-rgb', COLORIZER.hexToRgbStr(c.hex));
-            btn.style.setProperty('--swatch-check', COLORIZER.contrastColor(c.hex));
-            btn.style.animationDelay = (i * 35) + 'ms';
-            btn.setAttribute('aria-label', c.name);
-            btn.setAttribute('title', c.name);
-            btn.dataset.id = c.id; // Store ID for logic
-
-            const circle = document.createElement('span');
-            circle.className = 'swatch__circle';
-            const label = document.createElement('span');
-            label.className = 'swatch__label';
-            label.textContent = c.name;
-            btn.appendChild(circle);
-            btn.appendChild(label);
-
-            btn.addEventListener('click', () => _applyColor(c));
-            wrap.appendChild(btn);
-          });
-        };
-
-        const _setProcessingState = (isProcessing) => {
-          _colorizing = isProcessing;
-          const loader = document.getElementById('viewer-loader');
-          const canvas = document.getElementById('viewer-canvas');
-          const swatches = document.querySelectorAll('#viewer-swatches .swatch');
-
-          if (isProcessing) {
-            loader.classList.add('active');
-            canvas.style.opacity = '0.5';
-            swatches.forEach(btn => btn.disabled = true);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => { _imgCache.set(url, img); res(img); };
+        img.onerror = () => {
+          if (!finalUrl.includes('allorigins.win')) {
+            const proxyImg = new Image();
+            proxyImg.crossOrigin = 'anonymous';
+            proxyImg.onload = () => { _imgCache.set(url, proxyImg); res(proxyImg); };
+            proxyImg.onerror = () => rej(new Error('Proxy failed'));
+            proxyImg.src = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(finalUrl);
           } else {
-            loader.classList.remove('active');
-            canvas.style.opacity = '1';
-            swatches.forEach(btn => btn.disabled = false);
+            rej(new Error('Load failed'));
           }
         };
-
-        const _applyColor = async (colorDef) => {
-          if (_colorizing) return; // Previene Race Conditions
-          _setProcessingState(true);
-
-          document.getElementById('viewer-badge-dot').style.background = 'linear-gradient(135deg, ' + colorDef.hex + ' 50%, ' + (colorDef.hexAlt || colorDef.hex) + ' 50%)';
-          document.getElementById('viewer-badge-name').textContent = colorDef.name;
-          document.getElementById('viewer-glow').style.background = 'rgba(' + COLORIZER.hexToRgbStr(colorDef.hex) + ', 0.18)';
-
-          document.querySelectorAll('#viewer-swatches .swatch').forEach(s => s.classList.remove('active'));
-          const target = document.querySelector(`.swatch[data-id="${colorDef.id}"]`);
-          if (target) target.classList.add('active');
-
-          const canvas = document.getElementById('viewer-canvas');
-          if (_currentPolo.imageUrl) {
-            await COLORIZER.colorize(canvas, _currentPolo.imageUrl, colorDef.hex, _currentPolo.overlayUrl, colorDef.hexAlt || colorDef.hex);
-          }
-
-          _setProcessingState(false);
-        };
-
-        return { open };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         PIN VIEW
-      ═══════════════════════════════════════════════════ */
-      const PIN_VIEW = (() => {
-        let _buffer = '';
-
-        const render = () => {
-          _buffer = '';
-          _renderDots();
-          _renderKeypad();
-          document.getElementById('pin-error').textContent = '';
-          const secs = AUTH.lockoutSecondsLeft();
-          if (secs > 0) _startLockoutCountdown(secs);
-        };
-
-        const _renderDots = () => {
-          const wrap = document.getElementById('pin-dots');
-          wrap.innerHTML = '';
-          const len = STORE.getPinLen();
-          for (let i = 0; i < len; i++) {
-            const d = document.createElement('div');
-            d.className = 'pin-dot' + (i < _buffer.length ? ' filled' : '');
-            wrap.appendChild(d);
-          }
-        };
-
-        const _renderKeypad = () => {
-          const wrap = document.getElementById('pin-keypad');
-          wrap.innerHTML = '';
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].forEach(k => {
-            const btn = document.createElement('button');
-            btn.className = 'pin-key' + (k === '⌫' ? ' del' : '');
-            btn.textContent = k === '' ? '' : k;
-            if (k === '') { btn.disabled = true; btn.style.visibility = 'hidden'; }
-            else if (k === '⌫') btn.addEventListener('click', _backspace);
-            else btn.addEventListener('click', () => _press(String(k)));
-            wrap.appendChild(btn);
-          });
-        };
-
-        const _press = (digit) => {
-          const maxLen = STORE.getPinLen();
-          if (_buffer.length >= maxLen) return;
-          _buffer += digit;
-          _renderDots();
-          if (_buffer.length === maxLen) _submit();
-        };
-
-        let _pressTimer = null;
-        const _backspace = () => {
-          clearTimeout(_pressTimer);
-          _buffer = _buffer.slice(0, -1);
-          _renderDots();
-        };
-
-        const _startLockoutCountdown = (seconds) => {
-          let s = seconds;
-          const errEl = document.getElementById('pin-error');
-          const tick = () => {
-            errEl.textContent = `Bloqueado. Espera ${s} segundo${s !== 1 ? 's' : ''}.`;
-            if (s <= 0) { errEl.textContent = ''; return; }
-            s--;
-            setTimeout(tick, 1000);
-          };
-          tick();
-          document.querySelectorAll('.pin-key').forEach(b => b.disabled = true);
-          setTimeout(() => {
-            document.querySelectorAll('.pin-key').forEach(b => b.disabled = false);
-            _buffer = '';
-            _renderDots();
-          }, seconds * 1000);
-        };
-
-        const _submit = async () => {
-          clearTimeout(_pressTimer);
-          const result = await AUTH.verify(_buffer);
-          if (result.status === 'ok') {
-            ADMIN.open();
-          } else if (result.status === 'locked') {
-            _buffer = '';
-            _renderDots();
-            _startLockoutCountdown(result.seconds || 60);
-          } else {
-            const rem = result.remaining;
-            _showError(`PIN incorrecto.${rem !== undefined ? ' Intentos restantes: ' + rem : ''}`);
-            document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error'));
-            setTimeout(() => {
-              _buffer = '';
-              _renderDots();
-              document.getElementById('pin-error').textContent = '';
-            }, 700);
-          }
-        };
-
-        const _showError = (msg) => { document.getElementById('pin-error').textContent = msg; };
-
-        return { render };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         ADMIN — Refactorizado para Crear Nodos Seguros (KISS + Security)
-      ═══════════════════════════════════════════════════ */
-      const ADMIN = (() => {
-
-        const open = () => {
-          UI.showPage('page-admin');
-          switchSection('polos');
-        };
-
-        const switchSection = (name) => {
-          document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-          document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
-          const sec = document.getElementById('section-' + name);
-          if (sec) sec.classList.add('active');
-          const btn = document.querySelector(`.admin-nav-item[data-section="${name}"]`);
-          if (btn) btn.classList.add('active');
-
-          if (name === 'polos') { _renderPoloList(); _renderColorCheckboxes(); }
-          if (name === 'colors') _renderColorList();
-        };
-
-        /* ── COLORES ── */
-        const addColor = () => {
-          const name = document.getElementById('color-name').value.trim();
-          const hex = document.getElementById('color-hex').value;
-          const hexAlt = document.getElementById('color-hex-alt').value;
-
-          if (!name) return UI.toast('El nombre del color es obligatorio.', 'error');
-          const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-          if (STORE.getColors().find(c => c.id === id)) return UI.toast('Ya existe un color con ese nombre.', 'error');
-
-          STORE.addColor({ id, name, hex, hexAlt });
-          document.getElementById('color-name').value = '';
-          _renderColorList();
-          _renderColorCheckboxes();
-          UI.toast(`Color "${name}" agregado.`, 'success');
-        };
-
-        // MEJORA: Previene XSS construyendo nodos en vez de innerHTML complejo
-        const _renderColorList = () => {
-          const list = document.getElementById('color-list');
-          list.innerHTML = '';
-          const colors = STORE.getColors();
-          if (!colors.length) {
-            list.appendChild(UTILS.createElement('p', '', 'No hay colores aún.'));
-            return;
-          }
-
-          colors.forEach(c => {
-            const item = UTILS.createElement('div', 'admin-item');
-
-            // Info Container
-            const infoDiv = UTILS.createElement('div', 'admin-item__info');
-            infoDiv.style.cssText = 'flex-direction:row;align-items:center;gap:12px';
-
-            const swatch = UTILS.createElement('div', 'admin-item__swatch');
-            swatch.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
-            infoDiv.appendChild(swatch);
-
-            const textWrap = document.createElement('div');
-            textWrap.appendChild(UTILS.createElement('div', 'admin-item__name', c.name)); // TextContent = Seguro
-            textWrap.appendChild(UTILS.createElement('div', 'admin-item__meta', `${c.hex}${c.hexAlt && c.hex !== c.hexAlt ? ' / ' + c.hexAlt : ''}`));
-            infoDiv.appendChild(textWrap);
-
-            // Actions Container
-            const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
-            const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
-            btnDel.addEventListener('click', () => _delColor(c.id, c.name));
-            actionsDiv.appendChild(btnDel);
-
-            item.appendChild(infoDiv);
-            item.appendChild(actionsDiv);
-            list.appendChild(item);
-          });
-        };
-
-        const _delColor = (id, name) => {
-          if (!UI.confirm(`¿Eliminar el color "${name}"? Los modelos que lo usen lo perderán.`)) return;
-          STORE.delColor(id);
-          const polos = STORE.getPolos().map(p => ({ ...p, colorIds: (p.colorIds || []).filter(c => c !== id) }));
-          STORE.setPolos(polos);
-          _renderColorList();
-          _renderColorCheckboxes();
-          UI.toast('Color eliminado.', 'success');
-        };
-
-        /* ── POLOS ── */
-        const _renderColorCheckboxes = () => {
-          const wrap = document.getElementById('polo-color-checkboxes');
-          wrap.innerHTML = '';
-          STORE.getColors().forEach(c => {
-            const label = document.createElement('label');
-            label.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer';
-
-            const cb = document.createElement('input');
-            cb.type = 'checkbox'; cb.value = c.id; cb.id = 'pcb-' + c.id;
-
-            const dot = document.createElement('span');
-            dot.style.cssText = `width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%);border:1.5px solid rgba(255,255,255,.12);flex-shrink:0`;
-
-            label.appendChild(cb);
-            label.appendChild(dot);
-            label.appendChild(document.createTextNode(c.name)); // Seguro
-            wrap.appendChild(label);
-          });
-        };
-
-        const previewImage = () => {
-          const url = document.getElementById('polo-url').value.trim();
-          const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
-          const wrap = document.getElementById('polo-preview-wrap');
-          wrap.innerHTML = '';
-
-          if (!url) { wrap.appendChild(UTILS.createElement('span', 'placeholder', 'La imagen aparecerá aquí')); return; }
-
-          wrap.appendChild(UTILS.createElement('span', 'placeholder', 'Cargando y procesando imagen...'));
-
-          const canvas = document.createElement('canvas');
-          COLORIZER.colorizeThumbnail(canvas, url, '#E0D8CC', overlayUrl, '#1B2E4B')
-            .then(() => { wrap.innerHTML = ''; wrap.appendChild(canvas); })
-            .catch((err) => {
-              wrap.innerHTML = '';
-              const errSpan = UTILS.createElement('span', 'placeholder', '❌ Error al cargar. Revisa que el enlace sea correcto y público.');
-              errSpan.style.color = 'var(--danger)';
-              wrap.appendChild(errSpan);
-            });
-        };
-
-        const addPolo = () => {
-          const name = document.getElementById('polo-name').value.trim();
-          const url = document.getElementById('polo-url').value.trim();
-          const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
-
-          if (!name) return UI.toast('El nombre del modelo es obligatorio.', 'error');
-          if (!url) return UI.toast('La URL de la imagen principal es obligatoria.', 'error');
-
-          const colorIds = [...document.querySelectorAll('#polo-color-checkboxes input:checked')].map(i => i.value);
-          if (!colorIds.length) return UI.toast('Selecciona al menos un color.', 'error');
-
-          const id = Date.now().toString(36);
-          STORE.addPolo({ id, name, imageUrl: url, overlayUrl: overlayUrl || null, colorIds });
-
-          document.getElementById('polo-name').value = '';
-          document.getElementById('polo-url').value = '';
-          document.getElementById('polo-overlay-url').value = '';
-          document.getElementById('polo-preview-wrap').innerHTML = '<span class="placeholder">La imagen aparecerá aquí</span>';
-          document.querySelectorAll('#polo-color-checkboxes input').forEach(i => i.checked = false);
-
-          _renderPoloList();
-          UI.toast(`Polo "${name}" agregada al catálogo.`, 'success');
-        };
-
-        // MEJORA: Nodos nativos seguros
-        const _renderPoloList = () => {
-          const list = document.getElementById('polo-list');
-          list.innerHTML = '';
-          const polos = STORE.getPolos();
-          const colorMap = Object.fromEntries(STORE.getColors().map(c => [c.id, c]));
-
-          if (!polos.length) {
-            list.appendChild(UTILS.createElement('p', '', 'No hay modelos aún. Agrega tu primera polo.'));
-            return;
-          }
-
-          polos.forEach(p => {
-            const item = UTILS.createElement('div', 'admin-item');
-            const infoDiv = UTILS.createElement('div', 'admin-item__info');
-
-            infoDiv.appendChild(UTILS.createElement('div', 'admin-item__name', p.name));
-
-            const metaBase = UTILS.createElement('div', 'admin-item__meta', `Base: ${p.imageUrl}`);
-            metaBase.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
-            metaBase.title = p.imageUrl;
-            infoDiv.appendChild(metaBase);
-
-            if (p.overlayUrl) {
-              const metaDet = UTILS.createElement('div', 'admin-item__meta', `Detalles: ${p.overlayUrl}`);
-              metaDet.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--accent);';
-              infoDiv.appendChild(metaDet);
-            }
-
-            const chipsDiv = UTILS.createElement('div', 'color-chips');
-            (p.colorIds || []).forEach(cid => {
-              const c = colorMap[cid];
-              if (c) {
-                const chip = UTILS.createElement('span', 'color-chip');
-                chip.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
-                chip.title = c.name;
-                chipsDiv.appendChild(chip);
-              }
-            });
-            infoDiv.appendChild(chipsDiv);
-
-            const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
-            const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
-            btnDel.addEventListener('click', () => _delPolo(p.id, p.name));
-            actionsDiv.appendChild(btnDel);
-
-            item.appendChild(infoDiv);
-            item.appendChild(actionsDiv);
-            list.appendChild(item);
-          });
-        };
-
-        const _delPolo = (id, name) => {
-          if (!UI.confirm(`¿Eliminar el modelo "${name}"?`)) return;
-          STORE.delPolo(id);
-          _renderPoloList();
-          UI.toast('Modelo eliminado.', 'success');
-        };
-
-        /* ── AJUSTES & BACKUP ── */
-        const changePin = async () => {
-          const current = document.getElementById('pin-current').value;
-          const next = document.getElementById('pin-new').value;
-          if (!/^\d{4,6}$/.test(next)) return UI.toast('El PIN debe ser de 4 a 6 dígitos numéricos.', 'error');
-          if (!await AUTH.changePin(current, next)) return UI.toast('PIN actual incorrecto.', 'error');
-
-          document.getElementById('pin-current').value = '';
-          document.getElementById('pin-new').value = '';
-          UI.toast('PIN actualizado correctamente.', 'success');
-        };
-
-        const clearPolos = () => {
-          if (!UI.confirm('¿Eliminar TODOS los modelos? Esta acción no se puede deshacer.')) return;
-          STORE.setPolos([]);
-          _renderPoloList();
-          UI.toast('Todos los modelos eliminados.', 'success');
-        };
-
-        const clearColors = () => {
-          if (!UI.confirm('¿Eliminar TODOS los colores? Los modelos perderán sus colores asignados.')) return;
-          STORE.setColors([]);
-          STORE.setPolos(STORE.getPolos().map(p => ({ ...p, colorIds: [] })));
-          _renderColorList();
-          _renderColorCheckboxes();
-          _renderPoloList();
-          UI.toast('Todos los colores eliminados.', 'success');
-        };
-
-        // MEJORA: Métodos de Exportación / Importación (Seguros)
-        const exportData = () => {
-          try {
-            const data = STORE.exportDataObj();
-            const dateStr = new Date().toISOString().split('T')[0];
-            UTILS.downloadJSON(data, `polo-studio-backup-${dateStr}.json`);
-            UI.toast('Backup descargado correctamente.', 'success');
-          } catch (e) {
-            UI.toast('Error al exportar datos.', 'error');
-          }
-        };
-
-        const importData = (event) => {
-          const file = event.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            try {
-              const obj = JSON.parse(e.target.result);
-              if (UI.confirm('¿Estás seguro? Esto reemplazará todos los modelos y colores actuales con los del archivo.')) {
-                STORE.importDataObj(obj);
-                switchSection('polos'); // Refresca UI
-                UI.toast('Datos restaurados correctamente.', 'success');
-              }
-            } catch (err) {
-              console.error(err);
-              UI.toast('El archivo no es válido o está corrupto.', 'error');
-            }
-            // Resetear input para permitir subir el mismo archivo si es necesario
-            event.target.value = '';
-          };
-          reader.readAsText(file);
-        };
-
-        return { open, switchSection, addColor, addPolo, previewImage, changePin, clearPolos, clearColors, exportData, importData };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         MECANISMO DE BOTÓN ADMIN SECRETO
-      ═══════════════════════════════════════════════════ */
-      const SECRET_ADMIN = (() => {
-        const init = () => {
-          const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.get('admin') === '123') {
-            localStorage.setItem('ps_is_admin_device', 'true');
-            // Reemplaza estado actual omitiendo parámetros sensibles en URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-          }
-          if (localStorage.getItem('ps_is_admin_device') === 'true') {
-            const btn = document.getElementById('btn-admin');
-            if (btn) btn.style.display = 'block';
-          }
-        };
-        return { init };
-      })();
-
-      /* ═══════════════════════════════════════════════════
-         APP — Inicializador
-      ═══════════════════════════════════════════════════ */
-      window.APP = {
-        showCatalog: () => {
-          CATALOG.render();
-          UI.showPage('page-catalog');
-        },
-        showPin: () => {
-          if (AUTH.isAuth()) { ADMIN.open(); return; }
-          PIN_VIEW.render();
-          UI.showPage('page-pin');
-        },
-        logout: () => {
-          AUTH.logout();
-          UI.showPage('page-catalog');
-          UI.toast('Sesión cerrada.');
-        },
+        img.src = finalUrl;
+      });
+
+      const _hexToRgb = (hex) => {
+        const c = hex.replace('#', '');
+        return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)];
       };
 
-      // Exponer al scope global para listeners inline (onclick)
-      window.ADMIN = ADMIN;
-      window.PIN_VIEW = PIN_VIEW;
+      const hexToRgbStr = (hex) => _hexToRgb(hex).join(', ');
+      const contrastColor = (hex) => {
+        const [r, g, b] = _hexToRgb(hex);
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff';
+      };
 
-      // Arranque
-      SECRET_ADMIN.init();
-      APP.showCatalog();
+      const _applyMultiplyFilter = (ctx, canvasWidth, canvasHeight, hexColor) => {
+        const [tr, tg, tb] = _hexToRgb(hexColor);
+        const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+          if (a < 10) continue;
+          data[i] = Math.round((r * tr) / 255);
+          data[i + 1] = Math.round((g * tg) / 255);
+          data[i + 2] = Math.round((b * tb) / 255);
+        }
+        ctx.putImageData(imageData, 0, 0);
+      };
 
+      const colorize = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
+        if (!canvas || !imageUrl) return;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let imgBase, imgOverlay;
+
+        try {
+          imgBase = await _loadImage(imageUrl);
+          if (overlayUrl) imgOverlay = await _loadImage(overlayUrl);
+        } catch (e) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = 'rgba(224,92,92,0.1)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#e05c5c';
+          ctx.font = '14px DM Sans, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('❌ Imagen no disponible', canvas.width / 2, canvas.height / 2);
+          return;
+        }
+
+        const ratio = imgBase.naturalWidth / imgBase.naturalHeight;
+        if (ratio > 1) { canvas.width = 400; canvas.height = Math.round(400 / ratio); }
+        else { canvas.height = 480; canvas.width = Math.round(480 * ratio); }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(imgBase, 0, 0, canvas.width, canvas.height);
+        _applyMultiplyFilter(ctx, canvas.width, canvas.height, hex);
+
+        if (imgOverlay && hexAlt) {
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+          const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
+          tempCtx.drawImage(imgOverlay, 0, 0, tempCanvas.width, tempCanvas.height);
+          _applyMultiplyFilter(tempCtx, tempCanvas.width, tempCanvas.height, hexAlt);
+          ctx.drawImage(tempCanvas, 0, 0);
+        }
+      };
+
+      const colorizeThumbnail = async (canvas, imageUrl, hex, overlayUrl = null, hexAlt = null) => {
+        canvas.width = 200; canvas.height = 240;
+        await colorize(canvas, imageUrl, hex, overlayUrl, hexAlt);
+      };
+
+      return { colorize, colorizeThumbnail, hexToRgbStr, contrastColor };
     })();
+
+    /* ═══════════════════════════════════════════════════
+       AUTH — Autenticación para Entrar al Panel
+    ═══════════════════════════════════════════════════ */
+    const AUTH = (() => {
+      const _isLocked = () => {
+        const lo = STORE.getLockout();
+        if (lo.until && Date.now() < lo.until) return true;
+        if (lo.until && Date.now() >= lo.until) STORE.clearLockout();
+        return false;
+      };
+
+      const _lockoutSecondsLeft = () => {
+        const lo = STORE.getLockout();
+        if (!lo.until) return 0;
+        return Math.max(0, Math.ceil((lo.until - Date.now()) / 1000));
+      };
+
+      const verify = async (pin) => {
+        if (_isLocked()) return { status: 'locked', seconds: _lockoutSecondsLeft() };
+        const inputHash = await CRYPTO.hash(pin);
+        const storedHash = STORE.getPinHash();
+
+        if (inputHash === storedHash) {
+          STORE.clearLockout();
+          STORE.setSession();
+          return { status: 'ok' };
+        }
+
+        const lo = STORE.getLockout();
+        const attempts = (lo.attempts || 0) + 1;
+        if (attempts >= CFG.MAX_ATTEMPTS) {
+          STORE.setLockout({ attempts, until: Date.now() + CFG.LOCKOUT_TTL });
+          return { status: 'locked', seconds: CFG.LOCKOUT_TTL / 1000 };
+        }
+        STORE.setLockout({ attempts, until: 0 });
+        return { status: 'fail', remaining: CFG.MAX_ATTEMPTS - attempts };
+      };
+
+      const changePin = async (current, next) => {
+        if (!/^\d{4,6}$/.test(next)) return false;
+        const currentHash = await CRYPTO.hash(current);
+        if (currentHash !== STORE.getPinHash()) return false;
+        const nextHash = await CRYPTO.hash(next);
+        await STORE.setPinData(nextHash, next.length);
+        return true;
+      };
+
+      const logout = () => STORE.clearSession();
+      const isAuth = () => STORE.isSessionOk();
+      const lockoutSecondsLeft = _lockoutSecondsLeft;
+
+      return { verify, changePin, logout, isAuth, lockoutSecondsLeft };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       UI HELPERS
+    ═══════════════════════════════════════════════════ */
+    const UI = (() => {
+      let _toastTimer = null;
+      const showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const pg = document.getElementById(id);
+        if (pg) pg.classList.add('active');
+        window.scrollTo(0, 0);
+      };
+      const toast = (msg, type = '') => {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className = 'toast show ' + type;
+        clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+      };
+      const confirm = (msg) => window.confirm(msg);
+
+      // Trigger re-render of active screen
+      const refreshActiveScreen = () => {
+        if (document.getElementById('page-catalog').classList.contains('active')) CATALOG.render();
+        if (document.getElementById('page-admin').classList.contains('active')) {
+          const activeSec = document.querySelector('.admin-section.active');
+          if (activeSec) ADMIN.refreshSection(activeSec.id.replace('section-', ''));
+        }
+      };
+
+      return { showPage, toast, confirm, refreshActiveScreen };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       CATALOG VIEW
+    ═══════════════════════════════════════════════════ */
+    const CATALOG = (() => {
+      const _searchInput = document.getElementById('catalog-search');
+      let _currentFilter = '';
+
+      _searchInput.addEventListener('input', UTILS.debounce((e) => {
+        _currentFilter = e.target.value.toLowerCase().trim();
+        render();
+      }, 300));
+
+      const render = async () => {
+        const grid = document.getElementById('catalog-grid');
+        const polos = STORE.getPolos();
+        const colors = STORE.getColors();
+        const colorMap = Object.fromEntries(colors.map(c => [c.id, c]));
+
+        grid.innerHTML = '';
+
+        if (!polos.length) {
+          const emptyState = UTILS.createElement('div', 'catalog-empty');
+          emptyState.appendChild(UTILS.createElement('span', '', '👕'));
+          emptyState.appendChild(UTILS.createElement('p', '', 'El catálogo está vacío. El administrador aún no ha agregado polos a la nube.'));
+          grid.appendChild(emptyState);
+          return;
+        }
+
+        const filteredPolos = polos.filter(p => {
+          const matchName = p.name.toLowerCase().includes(_currentFilter);
+          const matchColor = (p.colorIds || []).some(cid => {
+            const c = colorMap[cid];
+            return c && c.name.toLowerCase().includes(_currentFilter);
+          });
+          return matchName || matchColor;
+        });
+
+        if (!filteredPolos.length) {
+          const emptySearch = UTILS.createElement('div', 'catalog-empty');
+          emptySearch.appendChild(UTILS.createElement('p', '', 'No se encontraron modelos con esa búsqueda.'));
+          grid.appendChild(emptySearch);
+          return;
+        }
+
+        for (const polo of filteredPolos) {
+          const card = UTILS.createElement('div', 'polo-card');
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.addEventListener('click', () => VIEWER.open(polo));
+          card.addEventListener('keyup', (e) => { if (e.key === 'Enter') VIEWER.open(polo); });
+
+          const thumbWrap = UTILS.createElement('div', 'polo-card__thumb');
+          const thumb = UTILS.createElement('canvas');
+          thumb.width = 200; thumb.height = 240;
+          thumbWrap.appendChild(thumb);
+          card.appendChild(thumbWrap);
+
+          const info = UTILS.createElement('div', 'polo-card__info');
+          info.appendChild(UTILS.createElement('div', 'polo-card__name', polo.name));
+
+          const dotsWrap = UTILS.createElement('div', 'polo-card__colors');
+          (polo.colorIds || []).forEach(cid => {
+            const c = colorMap[cid];
+            if (!c) return;
+            const dot = UTILS.createElement('span', 'polo-card__dot');
+            dot.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
+            dot.title = c.name;
+            dotsWrap.appendChild(dot);
+          });
+          info.appendChild(dotsWrap);
+
+          const ctaEl = UTILS.createElement('div', 'polo-card__cta', 'Ver colores');
+          info.appendChild(ctaEl);
+          card.appendChild(info);
+          grid.appendChild(card);
+
+          const firstColorId = (polo.colorIds || [])[0];
+          const firstColor = firstColorId ? colorMap[firstColorId] : null;
+          if (polo.imageUrl && firstColor) {
+            COLORIZER.colorizeThumbnail(thumb, polo.imageUrl, firstColor.hex, polo.overlayUrl, firstColor.hexAlt || firstColor.hex)
+              .catch(() => {
+                thumbWrap.innerHTML = '';
+                thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
+              });
+          } else if (!polo.imageUrl) {
+            thumbWrap.innerHTML = '';
+            thumbWrap.appendChild(UTILS.createElement('span', 'no-img', 'Sin imagen'));
+          }
+        }
+      };
+
+      return { render };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       VIEWER
+    ═══════════════════════════════════════════════════ */
+    const VIEWER = (() => {
+      let _currentPolo = null;
+      let _colorizing = false;
+
+      const open = (polo) => {
+        _currentPolo = polo;
+        document.getElementById('viewer-polo-name').textContent = polo.name;
+
+        document.getElementById('viewer-canvas').style.opacity = '0';
+        document.getElementById('viewer-glow').style.background = 'transparent';
+
+        _renderSwatches();
+        UI.showPage('page-viewer');
+        const colors = STORE.getColors();
+        const available = colors.filter(c => (polo.colorIds || []).includes(c.id));
+        if (available.length) _applyColor(available[0]);
+      };
+
+      const _renderSwatches = () => {
+        const wrap = document.getElementById('viewer-swatches');
+        const colors = STORE.getColors();
+        const available = colors.filter(c => (_currentPolo.colorIds || []).includes(c.id));
+        wrap.innerHTML = '';
+
+        available.forEach((c, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'swatch';
+          btn.style.setProperty('--swatch-hex', c.hex);
+          btn.style.setProperty('--swatch-alt', c.hexAlt || c.hex);
+          btn.style.setProperty('--swatch-rgb', COLORIZER.hexToRgbStr(c.hex));
+          btn.style.setProperty('--swatch-check', COLORIZER.contrastColor(c.hex));
+          btn.style.animationDelay = (i * 35) + 'ms';
+          btn.setAttribute('aria-label', c.name);
+          btn.setAttribute('title', c.name);
+          btn.dataset.id = c.id;
+
+          const circle = document.createElement('span');
+          circle.className = 'swatch__circle';
+          const label = document.createElement('span');
+          label.className = 'swatch__label';
+          label.textContent = c.name;
+          btn.appendChild(circle);
+          btn.appendChild(label);
+
+          btn.addEventListener('click', () => _applyColor(c));
+          wrap.appendChild(btn);
+        });
+      };
+
+      const _setProcessingState = (isProcessing) => {
+        _colorizing = isProcessing;
+        const loader = document.getElementById('viewer-loader');
+        const canvas = document.getElementById('viewer-canvas');
+        const swatches = document.querySelectorAll('#viewer-swatches .swatch');
+
+        if (isProcessing) {
+          loader.classList.add('active');
+          canvas.style.opacity = '0.5';
+          swatches.forEach(btn => btn.disabled = true);
+        } else {
+          loader.classList.remove('active');
+          canvas.style.opacity = '1';
+          swatches.forEach(btn => btn.disabled = false);
+        }
+      };
+
+      const _applyColor = async (colorDef) => {
+        if (_colorizing) return;
+        _setProcessingState(true);
+
+        document.getElementById('viewer-badge-dot').style.background = `linear-gradient(135deg, ${colorDef.hex} 50%, ${colorDef.hexAlt || colorDef.hex} 50%)`;
+        document.getElementById('viewer-badge-name').textContent = colorDef.name;
+        document.getElementById('viewer-glow').style.background = `rgba(${COLORIZER.hexToRgbStr(colorDef.hex)}, 0.18)`;
+
+        document.querySelectorAll('#viewer-swatches .swatch').forEach(s => s.classList.remove('active'));
+        const target = document.querySelector(`.swatch[data-id="${colorDef.id}"]`);
+        if (target) target.classList.add('active');
+
+        const canvas = document.getElementById('viewer-canvas');
+        if (_currentPolo.imageUrl) {
+          await COLORIZER.colorize(canvas, _currentPolo.imageUrl, colorDef.hex, _currentPolo.overlayUrl, colorDef.hexAlt || colorDef.hex);
+        }
+
+        _setProcessingState(false);
+      };
+
+      return { open };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       PIN VIEW
+    ═══════════════════════════════════════════════════ */
+    const PIN_VIEW = (() => {
+      let _buffer = '';
+
+      const render = () => {
+        _buffer = '';
+        _renderDots();
+        _renderKeypad();
+        document.getElementById('pin-error').textContent = '';
+        const secs = AUTH.lockoutSecondsLeft();
+        if (secs > 0) _startLockoutCountdown(secs);
+      };
+
+      const _renderDots = () => {
+        const wrap = document.getElementById('pin-dots');
+        wrap.innerHTML = '';
+        const len = STORE.getPinLen();
+        for (let i = 0; i < len; i++) {
+          const d = document.createElement('div');
+          d.className = 'pin-dot' + (i < _buffer.length ? ' filled' : '');
+          wrap.appendChild(d);
+        }
+      };
+
+      const _renderKeypad = () => {
+        const wrap = document.getElementById('pin-keypad');
+        wrap.innerHTML = '';
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].forEach(k => {
+          const btn = document.createElement('button');
+          btn.className = 'pin-key' + (k === '⌫' ? ' del' : '');
+          btn.textContent = k === '' ? '' : k;
+          if (k === '') { btn.disabled = true; btn.style.visibility = 'hidden'; }
+          else if (k === '⌫') btn.addEventListener('click', _backspace);
+          else btn.addEventListener('click', () => _press(String(k)));
+          wrap.appendChild(btn);
+        });
+      };
+
+      const _press = (digit) => {
+        const maxLen = STORE.getPinLen();
+        if (_buffer.length >= maxLen) return;
+        _buffer += digit;
+        _renderDots();
+        if (_buffer.length === maxLen) _submit();
+      };
+
+      let _pressTimer = null;
+      const _backspace = () => {
+        clearTimeout(_pressTimer);
+        _buffer = _buffer.slice(0, -1);
+        _renderDots();
+      };
+
+      const _startLockoutCountdown = (seconds) => {
+        let s = seconds;
+        const errEl = document.getElementById('pin-error');
+        const tick = () => {
+          errEl.textContent = `Bloqueado. Espera ${s} segundo${s !== 1 ? 's' : ''}.`;
+          if (s <= 0) { errEl.textContent = ''; return; }
+          s--;
+          setTimeout(tick, 1000);
+        };
+        tick();
+        document.querySelectorAll('.pin-key').forEach(b => b.disabled = true);
+        setTimeout(() => {
+          document.querySelectorAll('.pin-key').forEach(b => b.disabled = false);
+          _buffer = '';
+          _renderDots();
+        }, seconds * 1000);
+      };
+
+      const _submit = async () => {
+        clearTimeout(_pressTimer);
+        const result = await AUTH.verify(_buffer);
+        if (result.status === 'ok') {
+          ADMIN.open();
+        } else if (result.status === 'locked') {
+          _buffer = '';
+          _renderDots();
+          _startLockoutCountdown(result.seconds || 60);
+        } else {
+          const rem = result.remaining;
+          _showError(`PIN incorrecto.${rem !== undefined ? ' Intentos restantes: ' + rem : ''}`);
+          document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error'));
+          setTimeout(() => {
+            _buffer = '';
+            _renderDots();
+            document.getElementById('pin-error').textContent = '';
+          }, 700);
+        }
+      };
+
+      const _showError = (msg) => { document.getElementById('pin-error').textContent = msg; };
+
+      return { render };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       ADMIN — Panel de Control
+    ═══════════════════════════════════════════════════ */
+    const ADMIN = (() => {
+
+      const open = () => {
+        UI.showPage('page-admin');
+        switchSection('polos');
+      };
+
+      const switchSection = (name) => {
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+        const sec = document.getElementById('section-' + name);
+        if (sec) sec.classList.add('active');
+        const btn = document.querySelector(`.admin-nav-item[data-section="${name}"]`);
+        if (btn) btn.classList.add('active');
+
+        refreshSection(name);
+      };
+
+      const refreshSection = (name) => {
+        if (name === 'polos') { _renderPoloList(); _renderColorCheckboxes(); }
+        if (name === 'colors') _renderColorList();
+      };
+
+      /* ── COLORES ── */
+      const addColor = async () => {
+        const name = document.getElementById('color-name').value.trim();
+        const hex = document.getElementById('color-hex').value;
+        const hexAlt = document.getElementById('color-hex-alt').value;
+
+        if (!name) return UI.toast('El nombre del color es obligatorio.', 'error');
+        const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+        if (STORE.getColors().find(c => c.id === id)) return UI.toast('Ya existe un color con ese nombre.', 'error');
+
+        await STORE.addColor({ id, name, hex, hexAlt });
+        document.getElementById('color-name').value = '';
+        UI.toast(`Color "${name}" guardado en la nube.`, 'success');
+      };
+
+      const _renderColorList = () => {
+        const list = document.getElementById('color-list');
+        list.innerHTML = '';
+        const colors = STORE.getColors();
+        if (!colors.length) {
+          list.appendChild(UTILS.createElement('p', '', 'No hay colores aún.'));
+          return;
+        }
+
+        colors.forEach(c => {
+          const item = UTILS.createElement('div', 'admin-item');
+
+          const infoDiv = UTILS.createElement('div', 'admin-item__info');
+          infoDiv.style.cssText = 'flex-direction:row;align-items:center;gap:12px';
+
+          const swatch = UTILS.createElement('div', 'admin-item__swatch');
+          swatch.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
+          infoDiv.appendChild(swatch);
+
+          const textWrap = document.createElement('div');
+          textWrap.appendChild(UTILS.createElement('div', 'admin-item__name', c.name));
+          textWrap.appendChild(UTILS.createElement('div', 'admin-item__meta', `${c.hex}${c.hexAlt && c.hex !== c.hexAlt ? ' / ' + c.hexAlt : ''}`));
+          infoDiv.appendChild(textWrap);
+
+          const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
+          const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
+          btnDel.addEventListener('click', () => _delColor(c.id, c.name));
+          actionsDiv.appendChild(btnDel);
+
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          list.appendChild(item);
+        });
+      };
+
+      const _delColor = async (id, name) => {
+        if (!UI.confirm(`¿Eliminar el color "${name}" de la nube? Los modelos que lo usen lo perderán.`)) return;
+        await STORE.delColor(id);
+
+        // Actualizar los modelos que contenían ese color
+        const updatedPolos = STORE.getPolos().map(p => {
+          if ((p.colorIds || []).includes(id)) {
+            return { ...p, colorIds: p.colorIds.filter(c => c !== id) };
+          }
+          return null;
+        }).filter(p => p !== null);
+
+        if (updatedPolos.length > 0) {
+          await STORE.updatePolosBatch(updatedPolos);
+        }
+
+        UI.toast('Color eliminado de la nube.', 'success');
+      };
+
+      /* ── POLOS ── */
+      const _renderColorCheckboxes = () => {
+        const wrap = document.getElementById('polo-color-checkboxes');
+        wrap.innerHTML = '';
+        STORE.getColors().forEach(c => {
+          const label = document.createElement('label');
+          label.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer';
+
+          const cb = document.createElement('input');
+          cb.type = 'checkbox'; cb.value = c.id; cb.id = 'pcb-' + c.id;
+
+          const dot = document.createElement('span');
+          dot.style.cssText = `width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%);border:1.5px solid rgba(255,255,255,.12);flex-shrink:0`;
+
+          label.appendChild(cb);
+          label.appendChild(dot);
+          label.appendChild(document.createTextNode(c.name));
+          wrap.appendChild(label);
+        });
+      };
+
+      const previewImage = () => {
+        const url = document.getElementById('polo-url').value.trim();
+        const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
+        const wrap = document.getElementById('polo-preview-wrap');
+        wrap.innerHTML = '';
+
+        if (!url) { wrap.appendChild(UTILS.createElement('span', 'placeholder', 'La imagen aparecerá aquí')); return; }
+
+        wrap.appendChild(UTILS.createElement('span', 'placeholder', 'Cargando y procesando imagen...'));
+
+        const canvas = document.createElement('canvas');
+        COLORIZER.colorizeThumbnail(canvas, url, '#E0D8CC', overlayUrl, '#1B2E4B')
+          .then(() => { wrap.innerHTML = ''; wrap.appendChild(canvas); })
+          .catch((err) => {
+            wrap.innerHTML = '';
+            const errSpan = UTILS.createElement('span', 'placeholder', '❌ Error al cargar. Revisa que el enlace sea correcto y público.');
+            errSpan.style.color = 'var(--danger)';
+            wrap.appendChild(errSpan);
+          });
+      };
+
+      const addPolo = async () => {
+        const name = document.getElementById('polo-name').value.trim();
+        const url = document.getElementById('polo-url').value.trim();
+        const overlayUrl = document.getElementById('polo-overlay-url').value.trim();
+
+        if (!name) return UI.toast('El nombre del modelo es obligatorio.', 'error');
+        if (!url) return UI.toast('La URL de la imagen principal es obligatoria.', 'error');
+
+        const colorIds = [...document.querySelectorAll('#polo-color-checkboxes input:checked')].map(i => i.value);
+        if (!colorIds.length) return UI.toast('Selecciona al menos un color.', 'error');
+
+        const id = Date.now().toString(36);
+        await STORE.addPolo({ id, name, imageUrl: url, overlayUrl: overlayUrl || null, colorIds });
+
+        document.getElementById('polo-name').value = '';
+        document.getElementById('polo-url').value = '';
+        document.getElementById('polo-overlay-url').value = '';
+        document.getElementById('polo-preview-wrap').innerHTML = '<span class="placeholder">La imagen aparecerá aquí</span>';
+        document.querySelectorAll('#polo-color-checkboxes input').forEach(i => i.checked = false);
+
+        UI.toast(`Polo "${name}" subida a la nube.`, 'success');
+      };
+
+      const _renderPoloList = () => {
+        const list = document.getElementById('polo-list');
+        list.innerHTML = '';
+        const polos = STORE.getPolos();
+        const colorMap = Object.fromEntries(STORE.getColors().map(c => [c.id, c]));
+
+        if (!polos.length) {
+          list.appendChild(UTILS.createElement('p', '', 'No hay modelos aún. Agrega tu primera polo.'));
+          return;
+        }
+
+        polos.forEach(p => {
+          const item = UTILS.createElement('div', 'admin-item');
+          const infoDiv = UTILS.createElement('div', 'admin-item__info');
+
+          infoDiv.appendChild(UTILS.createElement('div', 'admin-item__name', p.name));
+
+          const metaBase = UTILS.createElement('div', 'admin-item__meta', `Base: ${p.imageUrl}`);
+          metaBase.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
+          metaBase.title = p.imageUrl;
+          infoDiv.appendChild(metaBase);
+
+          if (p.overlayUrl) {
+            const metaDet = UTILS.createElement('div', 'admin-item__meta', `Detalles: ${p.overlayUrl}`);
+            metaDet.style.cssText = 'word-break:break-all;max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--accent);';
+            infoDiv.appendChild(metaDet);
+          }
+
+          const chipsDiv = UTILS.createElement('div', 'color-chips');
+          (p.colorIds || []).forEach(cid => {
+            const c = colorMap[cid];
+            if (c) {
+              const chip = UTILS.createElement('span', 'color-chip');
+              chip.style.background = `linear-gradient(135deg, ${c.hex} 50%, ${c.hexAlt || c.hex} 50%)`;
+              chip.title = c.name;
+              chipsDiv.appendChild(chip);
+            }
+          });
+          infoDiv.appendChild(chipsDiv);
+
+          const actionsDiv = UTILS.createElement('div', 'admin-item__actions');
+          const btnDel = UTILS.createElement('button', 'btn btn-danger btn-sm', 'Eliminar');
+          btnDel.addEventListener('click', () => _delPolo(p.id, p.name));
+          actionsDiv.appendChild(btnDel);
+
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          list.appendChild(item);
+        });
+      };
+
+      const _delPolo = async (id, name) => {
+        if (!UI.confirm(`¿Eliminar el modelo "${name}" de la nube?`)) return;
+        await STORE.delPolo(id);
+        UI.toast('Modelo eliminado.', 'success');
+      };
+
+      /* ── AJUSTES & BACKUP ── */
+      const changePin = async () => {
+        const current = document.getElementById('pin-current').value;
+        const next = document.getElementById('pin-new').value;
+        if (!/^\d{4,6}$/.test(next)) return UI.toast('El PIN debe ser de 4 a 6 dígitos numéricos.', 'error');
+        if (!await AUTH.changePin(current, next)) return UI.toast('PIN actual incorrecto.', 'error');
+
+        document.getElementById('pin-current').value = '';
+        document.getElementById('pin-new').value = '';
+        UI.toast('PIN actualizado correctamente en la nube.', 'success');
+      };
+
+      const clearPolos = async () => {
+        if (!UI.confirm('¿Eliminar TODOS los modelos de la nube? Esta acción no se puede deshacer.')) return;
+        const polos = STORE.getPolos();
+        for (const p of polos) await STORE.delPolo(p.id);
+        UI.toast('Todos los modelos eliminados de la nube.', 'success');
+      };
+
+      const clearColors = async () => {
+        if (!UI.confirm('¿Eliminar TODOS los colores de la nube? Los modelos perderán sus colores.')) return;
+        const colors = STORE.getColors();
+        for (const c of colors) await STORE.delColor(c.id);
+        UI.toast('Todos los colores eliminados de la nube.', 'success');
+      };
+
+      const exportData = () => {
+        try {
+          const data = STORE.exportDataObj();
+          const dateStr = new Date().toISOString().split('T')[0];
+          UTILS.downloadJSON(data, `polo-studio-backup-${dateStr}.json`);
+          UI.toast('Backup descargado correctamente.', 'success');
+        } catch (e) {
+          UI.toast('Error al exportar datos.', 'error');
+        }
+      };
+
+      const importData = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const obj = JSON.parse(e.target.result);
+            if (UI.confirm('¿Estás seguro? Esto reemplazará todos los modelos en la nube.')) {
+              await STORE.importDataObj(obj);
+              switchSection('polos');
+              UI.toast('Datos de la nube restaurados correctamente.', 'success');
+            }
+          } catch (err) {
+            console.error(err);
+            UI.toast('El archivo no es válido o está corrupto.', 'error');
+          }
+          event.target.value = '';
+        };
+        reader.readAsText(file);
+      };
+
+      return { open, switchSection, refreshSection, addColor, addPolo, previewImage, changePin, clearPolos, clearColors, exportData, importData };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       MECANISMO DE BOTÓN ADMIN SECRETO
+    ═══════════════════════════════════════════════════ */
+    const SECRET_ADMIN = (() => {
+      const init = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === '123') {
+          localStorage.setItem('ps_is_admin_device', 'true');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (localStorage.getItem('ps_is_admin_device') === 'true') {
+          const btn = document.getElementById('btn-admin');
+          if (btn) btn.style.display = 'block';
+        }
+      };
+      return { init };
+    })();
+
+    /* ═══════════════════════════════════════════════════
+       APP — Inicializador y Sincronización en Tiempo Real
+    ═══════════════════════════════════════════════════ */
+    window.APP = {
+      showCatalog: () => {
+        CATALOG.render();
+        UI.showPage('page-catalog');
+      },
+      showPin: () => {
+        if (AUTH.isAuth()) { ADMIN.open(); return; }
+        PIN_VIEW.render();
+        UI.showPage('page-pin');
+      },
+      logout: () => {
+        AUTH.logout();
+        UI.showPage('page-catalog');
+        UI.toast('Sesión cerrada.');
+      },
+    };
+
+    window.ADMIN = ADMIN;
+
+    // ARRANCAR APLICACIÓN E INICIAR SINCRONIZACIÓN FIREBASE
+    async function main() {
+      SECRET_ADMIN.init();
+
+      try {
+        await initAuth();
+
+        // Listeners en tiempo real para mantener todo sincronizado
+        onSnapshot(colorsRef, (snapshot) => {
+          STORE.state.colors = snapshot.docs.map(d => d.data());
+          UI.refreshActiveScreen();
+        }, (err) => console.error(err));
+
+        onSnapshot(polosRef, (snapshot) => {
+          STORE.state.polos = snapshot.docs.map(d => d.data());
+          UI.refreshActiveScreen();
+        }, (err) => console.error(err));
+
+        onSnapshot(settingsRef, (snapshot) => {
+          if (snapshot.exists()) {
+            STORE.state.pinHash = snapshot.data().pinHash;
+            STORE.state.pinLen = snapshot.data().pinLen;
+          }
+        }, (err) => console.error(err));
+
+        // Esperar la primera carga para quitar el spinner
+        setTimeout(() => {
+          document.getElementById('global-loader').classList.add('hide');
+          STORE.ensureDefaultPin(); // Solo crea un pin si la nube está virgen
+          APP.showCatalog();
+        }, 1200);
+
+      } catch (error) {
+        console.error("Firebase Auth Error:", error);
+        UI.toast('Error conectando al servidor.', 'error');
+        document.getElementById('global-loader').innerHTML = '<span style="color:var(--danger)">Error de Conexión</span>';
+      }
+    }
+
+    main();
+
   </script>
 </body>
 
